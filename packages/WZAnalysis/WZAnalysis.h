@@ -292,4 +292,6 @@ class WZAnalysis : public PAFChainItemSelector{
     Bool_t  gIsLHE;
 
     ClassDef(WZAnalysis, 0);
+    //the ClassDef macro must be the last item before the closing '};' 
+    //in a class definition
 };

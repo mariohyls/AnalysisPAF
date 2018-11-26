@@ -52,10 +52,10 @@ const TString kTagSel[nSel] = {"Stop",     "Top",     "TW",     "WW", "HWW",
 // Datasets:
     //>>> 2016 datasets
     TString data2016[] = {
-    //"16B_03Feb2017", "16C_03Feb2017", "16D_03Feb2017", "16E_03Feb2017",
-    //"16F_03Feb2017", 
+    "16B_03Feb2017", "16C_03Feb2017", "16D_03Feb2017", "16E_03Feb2017",
+    "16F_03Feb2017", 
     "16G_03Feb2017", "16H_03Feb2017_v2", "16H_03Feb2017_v3"};
-    const unsigned int nData2016 = 3;
+    const unsigned int nData2016 = 8;
 
     //>>> 2017 datasets
     TString data2017[] = { 
@@ -67,8 +67,8 @@ const TString kTagSel[nSel] = {"Stop",     "Top",     "TW",     "WW", "HWW",
 
     const unsigned int nData2017 = 1;
 
-    TString *SelectedDataset   = data2017;
-    unsigned int SelectedNdata = nData2017;
+    TString *SelectedDataset   = data2016;
+    unsigned int SelectedNdata = nData2016;
 
 //=============================================================================
 // Tabs
@@ -480,5 +480,4 @@ void GetCount(std::vector<TString> Files, Bool_t IsData){
 		f->Close();    
 	}
 }
-
 
