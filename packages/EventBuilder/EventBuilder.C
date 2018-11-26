@@ -373,6 +373,7 @@ void EventBuilder::Initialise(){
 
 void EventBuilder::InsideLoop(){
   nProcessedEvents++;
+  std::cout << nProcessedEvents << std::endl;
   // >>>>>>>>>>>>>> Get selected leptons:
   selLeptons = GetParam<std::vector<Lepton>>("selLeptons");
   vetoLeptons = GetParam<std::vector<Lepton>>("vetoLeptons");

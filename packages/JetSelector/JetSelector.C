@@ -163,7 +163,7 @@ void JetSelector::GetJetVariables(Int_t i, const TString& jec){
   flavmc = -999999;
   if(!gIsData){
     flavmc = Get<Int_t>("Jet"+jec+"_hadronFlavour", i);
-    if(gIs2017eccop) tmcJ.SetPtEtaPhiM(Get<Float_t>("Jet_mcPt", i), Get<Float_t>("Jet"+jec+"_eta",i), Get<Float_t>("Jet"+jec+"_phi", i), Get<Float_t>("Jet"+jec+"_mass",i));
+    if(gIs2017eccop || gSelection == iWZSelec) tmcJ.SetPtEtaPhiM(Get<Float_t>("Jet_mcPt", i), Get<Float_t>("Jet"+jec+"_eta",i), Get<Float_t>("Jet"+jec+"_phi", i), Get<Float_t>("Jet"+jec+"_mass",i));
     else tmcJ.SetPxPyPzE(Get<Float_t>("Jet"+jec+"_mcPx",i), Get<Float_t>("Jet"+jec+"_mcPy",i), Get<Float_t>("Jet"+jec+"_mcPz",i), Get<Float_t>("Jet"+jec+"_mcEnergy",i));
   }
 }
@@ -172,20 +172,24 @@ void JetSelector::GetDiscJetVariables(Int_t i){
   tpJ.SetPtEtaPhiM(Get<Float_t>("DiscJet_pt",i), Get<Float_t>("DiscJet_eta",i), Get<Float_t>("DiscJet_phi", i), Get<Float_t>("DiscJet_mass",i));
   eta = tpJ.Eta();;
   pt = tpJ.Pt();
-  rawPt       = gIs2017eccop? Get<Float_t>("DiscJet_pt",i) : Get<Float_t>("DiscJet_rawPt",i);
-  pt_corrUp   = gIs2017eccop? Get<Float_t>("DiscJet_pt",i) : Get<Float_t>("DiscJet_corr_JECUp",i); 
-  pt_corrDown = gIs2017eccop? Get<Float_t>("DiscJet_pt",i) : Get<Float_t>("DiscJet_corr_JECDown",i);
-  jetId       = gIs2017eccop? 1 : Get<Int_t>("DiscJet_id",i);
+  rawPt       = gIs2017eccop || gSelection == iWZSelec? Get<Float_t>("DiscJet_pt",i) : Get<Float_t>("DiscJet_rawPt",i);
+  pt_corrUp   = gIs2017eccop || gSelection == iWZSelec? Get<Float_t>("DiscJet_pt",i) : Get<Float_t>("DiscJet_corr_JECUp",i); 
+  pt_corrDown = gIs2017eccop || gSelection == iWZSelec? Get<Float_t>("DiscJet_pt",i) : Get<Float_t>("DiscJet_corr_JECDown",i);
+  jetId       = gIs2017eccop || gSelection == iWZSelec? 1 : Get<Int_t>("DiscJet_id",i);
   csv         = Get<Float_t>("DiscJet_btagCSV", i);
   flavmc = -999999;
   if(!gIsData){
     flavmc = Get<Int_t>("DiscJet_mcFlavour", i);  // Get<Int_t>("DiscJet_hadronFlavour", i);
-    if(!gIs2017eccop) tmcJ.SetPxPyPzE(Get<Float_t>("DiscJet_mcPx",i), Get<Float_t>("DiscJet_mcPy",i), Get<Float_t>("DiscJet_mcPz",i), Get<Float_t>("DiscJet_mcEnergy",i));
+    if(!gIs2017eccop || gSelection == iWZSelec) tmcJ.SetPxPyPzE(Get<Float_t>("DiscJet_mcPx",i), Get<Float_t>("DiscJet_mcPy",i), Get<Float_t>("DiscJet_mcPz",i), Get<Float_t>("DiscJet_mcEnergy",i));
   }
 }
 
 void JetSelector::GetJetFwdVariables(Int_t i){
-  tpJ.SetPxPyPzE(Get<Float_t>("JetFwd_px",i), Get<Float_t>("JetFwd_py",i), Get<Float_t>("JetFwd_pz", i), Get<Float_t>("JetFwd_energy",i));
+  std::cout << "HERE BE";
+  if(gIs2017eccop || gSelection == iWZSelec)   tpJ.SetPtEtaPhiM(Get<Float_t>("JetFwd_pt",i), Get<Float_t>("JetFwd_eta",i), Get<Float_t>("JetFwd_phi", i), Get<Float_t>("JetFwd_mass",i));
+  else  tpJ.SetPxPyPzE(Get<Float_t>("JetFwd_px",i), Get<Float_t>("JetFwd_py",i), Get<Float_t>("JetFwd_pz", i), Get<Float_t>("JetFwd_energy",i));
+  std::cout << "DRAGONS";
+
   eta = tpJ.Eta();;
   pt = tpJ.Pt();
   rawPt       = Get<Float_t>("JetFwd_rawPt",i);
@@ -207,7 +211,7 @@ void JetSelector::GetGenJetVariables(Int_t i){
 }
 
 void JetSelector::GetmcJetVariables(Int_t i, const TString& jec){
-  if(gIs2017eccop) tpJ.SetPtEtaPhiM(Get<Float_t>("Jet_mcPt", i), Get<Float_t>("Jet"+jec+"_eta",i), Get<Float_t>("Jet"+jec+"_phi", i), Get<Float_t>("Jet"+jec+"_mass",i));
+  if(gIs2017eccop || gSelection == iWZSelec) tpJ.SetPtEtaPhiM(Get<Float_t>("Jet_mcPt", i), Get<Float_t>("Jet"+jec+"_eta",i), Get<Float_t>("Jet"+jec+"_phi", i), Get<Float_t>("Jet"+jec+"_mass",i));
   else tpJ.SetPxPyPzE(Get<Float_t>("Jet"+jec+"_mcPx",i), Get<Float_t>("Jet"+jec+"_mcPy",i), Get<Float_t>("Jet"+jec+"_mcPz", i), Get<Float_t>("Jet"+jec+"_mcEnergy",i));
   eta = tpJ.Eta();
   pt =  Get<Float_t>("Jet"+jec+"_mcPt",i);
@@ -463,10 +467,10 @@ void JetSelector::InsideLoop(){
   }
 
   if(!gIsData){  // Add gen and mc jets...
-    if(!gIs2017eccop) ngenJet = Get<Int_t>("ngenJet");
+    if(!gIs2017eccop && gSelection != iWZSelec) ngenJet = Get<Int_t>("ngenJet");
     else ngenJet = Get<Int_t>("nJet");
     for(Int_t i = 0; i < ngenJet; i++){
-      if(!gIs2017eccop) GetGenJetVariables(i);
+      if(!gIs2017eccop && gSelection != iWZSelec) GetGenJetVariables(i);
       tJ = Jet(tpJ, 0, 1, 0);
       genJets.push_back(tJ);    
     }

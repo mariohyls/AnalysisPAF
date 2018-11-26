@@ -25,14 +25,14 @@ void RunAnalyserPAF(TString sampleName  = "TTbar_Powheg", TString Selection = "S
 		    Float_t uxsec = 1.0, TString options = "");
 
 //=============================================================================
-void GetCount(vector<TString> Files, Bool_t IsData = false);
+void GetCount(vector<TString> Files, Bool_t IsData = false, Bool_t pickler = false);
 
 // Global variables
 //
 vector<TString> Files = vector<TString>();
 Double_t        SumOfWeights;
-Int_t           Count;
-Int_t           nTrueEntries;
+Long_t          Count;
+Long_t           nTrueEntries;
 Float_t         xsec;
 Float_t         NormISRweights;
 Bool_t          verbose = true;
@@ -192,7 +192,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
 			Files.insert(Files.end(), (tempFiles).begin(), (tempFiles).end());
       if(verbose) cout << Form("\033[1;39m >>> Searching for: \033[1;34m %s \033[1;39m ... \033[0m\n", asample.Data());
     }
-    GetCount(Files, G_IsData);
+    GetCount(Files, G_IsData, Selection=="WZ");
   }
   else{ // Deal with MC samples 
     G_IsData = false;
@@ -222,9 +222,10 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
         Files.insert(Files.end(), tempFiles.begin(), tempFiles.end());
       }
       
-      GetCount(Files, G_IsData);
+      GetCount(Files, G_IsData, Selection=="WZ");
       xsec = uxsec;
       G_Event_Weight = xsec/Count;
+      if(options.Contains("Data") || options.Contains("data")) G_Event_Weight = 1;
       if(SumOfWeights != Count){ // is aMCatNLO
         G_IsMCatNLO = true;
         if(verbose) cout << " >>> This is an aMCatNLO sample!!" << endl;
@@ -298,7 +299,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
     cout << "\033[1;30m-------------------------------------------------\033[0m\n";
     if(!G_IsData)   cout << Form("\033[1;34m #### XSec             = %g \033[0m\n", xsec);
     cout << Form("\033[1;34m #### Total Entries    = %d \033[0m\n", nTrueEntries);
-    cout << Form("\033[1;34m #### Total gen events = %d \033[0m\n", Count);
+    cout << Form("\033[1;34m #### Total gen events = %l \033[0m\n", Count);
     cout << Form("\033[1;34m #### Weight for norm  = %g \033[0m\n", G_Event_Weight);
     if(G_IsMCatNLO) cout << Form("\033[1;34m #### Sum of weights   = %g \033[0m\n", SumOfWeights);
     cout << "\033[1;30m=================================================\033[0m\n";
@@ -405,7 +406,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   
   // Add the input data files
   myProject->AddDataFiles(Files); 
-
+  std::cout << nEvents << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< nEvents" << std::endl;
   // Deal with first and last event
   if     (nEvents > 0 && FirstEvent == 0) myProject->SetNEvents(nEvents);
   else if(FirstEvent != 0){
@@ -495,7 +496,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
 //=============================================================================
 //=== Auxiliary functions
 //=============================================================================
-void GetCount(std::vector<TString> Files, Bool_t IsData){
+void GetCount(std::vector<TString> Files, Bool_t IsData, Bool_t pickler = false){
 	Int_t nFiles = Files.size(); TFile *f;
 	TH1D *hcount; TH1D *hsum; TTree* tree;
 	if(verbose) cout << "\033[1;30m=================================================\033[0m\n";
@@ -507,10 +508,11 @@ void GetCount(std::vector<TString> Files, Bool_t IsData){
 		f->GetObject("Count", hcount);
 		Count        += hcount-> GetEntries();
     nTrueEntries += tree  -> GetEntries();
-		if(!IsData){ 
+		if(!IsData && !pickler){
 			f->GetObject("SumGenWeights", hsum);
 			SumOfWeights += hsum  -> GetBinContent(1);
 		}
+    else SumOfWeights = Count;
 		f->Close();    
 	}
 }

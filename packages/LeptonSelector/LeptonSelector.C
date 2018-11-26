@@ -613,7 +613,7 @@ Bool_t LeptonSelector::isGoodLepton(Lepton lep){
     if(TightCharge != 2) return false;
     return true;
   }
-  else if(gSelection == iWZSelec){ // Fakeable Objects for the WZ analysis. MVA WP (and related selection criteria) are defined inside the proper analysis
+  else if(gSelection == iWZSelec){ // Tight Objects for the WZ analysis. MVA WP (and related selection criteria) are defined inside the proper analysis
     Bool_t isMVALepton = true;    
     if(lep.isMuon){
       if(!isVetoLepton(lep)) isMVALepton = false;
