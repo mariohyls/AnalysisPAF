@@ -10,6 +10,14 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+
+// TODO: Leer localSamples.conf y ejecutar este código para cada uno
+// TODO: (Nombre de salida)
+// TODO: Leer también el valor de la sección eficaz
+
+
+
+
 //=============================================================================
 // Includes
 // + Load DatasetManager needed to find out information about datasets
@@ -26,6 +34,10 @@ void RunAnalyserPAF(TString sampleName  = "TTbar_Powheg", TString Selection = "S
 
 //=============================================================================
 void GetCount(vector<TString> Files, Bool_t IsData = false, Bool_t pickler = false);
+Float_t GetXsec(TString sampleName);
+
+
+
 
 // Global variables
 //
@@ -81,15 +93,26 @@ const TString tab2017v2     = "2017data_v2";
 
 TString SelectedTab = tab2016;
 
-
 //=============================================================================
 // Main function
 void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots, 
 		    Long64_t nEvents, Long64_t FirstEvent,
 		    Float_t uxsec, TString options) {
 
+  outputFileName = sampleName;
+
+  sampleName = "/pool/ciencias/HeppyTrees/RA7/estructura/wzSkimmed/"\
+  + sampleName + "/treeProducerSusyMultilepton/tree.root";
+
+  cout << "sampleName: " << sampleName << endl;
+
+  uxsec = GetXsec(sampleName);
+  std::cout << "xsec vale " << uxsec << std::endl;
+
   // By adding this line we get all the helper functions in PAF (PAF_INFO...)
   PAFProject* myProject = 0;
+
+
 
   if(sampleName.BeginsWith("Check:")){
     verbose = false;
@@ -298,8 +321,8 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
     //for(Int_t i = 0; i < (Int_t) Files.size(); i++) cout << Form("\033[1;32m >>> Including file: %s \033[0m\n", Files.at(i).Data());
     cout << "\033[1;30m-------------------------------------------------\033[0m\n";
     if(!G_IsData)   cout << Form("\033[1;34m #### XSec             = %g \033[0m\n", xsec);
-    cout << Form("\033[1;34m #### Total Entries    = %d \033[0m\n", nTrueEntries);
-    cout << Form("\033[1;34m #### Total gen events = %l \033[0m\n", Count);
+    cout << Form("\033[1;34m #### Total Entries    = %ld \033[0m\n", nTrueEntries);
+    cout << Form("\033[1;34m #### Total gen events = %ld \033[0m\n", Count);
     cout << Form("\033[1;34m #### Weight for norm  = %g \033[0m\n", G_Event_Weight);
     if(G_IsMCatNLO) cout << Form("\033[1;34m #### Sum of weights   = %g \033[0m\n", SumOfWeights);
     cout << "\033[1;30m=================================================\033[0m\n";
@@ -310,6 +333,9 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   // Output dir and tree name
   //----------------------------------------------------------------------------
 	
+
+
+  
   TString username(gSystem->GetUserInfo(gSystem->GetUid())->fUser);
   TString outPrefix("./");
   if(username=="vischia")
@@ -415,7 +441,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   }
 
   // Set output file
-  TString outputFile = outputDir + "/Tree_" + sampleName + ".root";
+  TString outputFile = outputDir + "/Tree_" + outputFileName + ".root";
   PAF_INFO("RunAnalyserPAF", Form("Output file is \"%s\"\n\n",outputFile.Data()));
   myProject->SetOutputFile(outputFile);
 
@@ -516,4 +542,23 @@ void GetCount(std::vector<TString> Files, Bool_t IsData, Bool_t pickler = false)
 		f->Close();    
 	}
 }
+
+
+
+Float_t GetXsec(TString sampleName){
+  TTree* tree;
+	if(verbose) cout << "\033[1;30m=================================================\033[0m\n";
+
+  cout << "sampleName: " << sampleName << endl;
+
+  f = TFile::Open(sampleName);
+  f->GetObject("tree", tree);
+  Float_t treeXSec;
+  tree->SetBranchAddress("xsec", &treeXSec);
+  tree->GetEntry(5);
+  std::cout << "HERE BE DRAGONS:   " << treeXSec << std::endl;
+  f->Close(); 
+  return treeXSec;
+}
+
 
