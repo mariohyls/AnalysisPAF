@@ -80,6 +80,7 @@ void WZAnalysis::InsideLoop(){
   passTrigger    = GetParam<Bool_t>("passTrigger");
   TEvtNum        = Get<ULong64_t>("evt");
 
+  std::cout << "test 0 " << std::endl;
 
 
   for (int wP = 0; wP < nWPoints; wP++){
@@ -99,11 +100,22 @@ void WZAnalysis::InsideLoop(){
       GetMET();
 
     //std::cout << "Match gen/reco\n";
-      //fakeableLeptons = getMatchGenSelLeptons(fakeableLeptons, genLeptons, 0.3, true); // Match gen and sel Leptons, require same Id
-      //fakeableLeptons = getMatchGenSelLeptons(fakeableLeptons, genParticles, 0.3, false); // Match gen particles and sel Leptons, do not require same Id (allow for taus)
+    //fakeableLeptons = getMatchGenSelLeptons(fakeableLeptons, genLeptons, 0.3, true); // Match gen and sel Leptons, require same Id
+    //fakeableLeptons = getMatchGenSelLeptons(fakeableLeptons, genParticles, 0.3, false); // Match gen particles and sel Leptons, do not require same Id (allow for taus)
+    std::cout << "test 1 " << std::endl;
 
-    if(TNFOLeps == 3 && TNOSSF > 0 && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
-      // Deal with weights:
+
+
+
+    std::cout << TNOSSF<< " " << passTrigger<< " "<< passMETfilters<< " "<< std::endl;
+
+    if(TNFOLeps == 3 && TNOSSF > 0  && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
+    //if(TNFOLeps < 3 && TNOSSF > 0  && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
+   
+      std::cout << "test 2 " << std::endl;
+
+
+    // Deal with weights:
     //std::cout << "Pass 3FO\n";
       Float_t lepSF   = fakeableLeptons.at(0).GetSF(0)*fakeableLeptons.at(1).GetSF(0)*fakeableLeptons.at(2).GetSF(0);
       Float_t ElecSF = 1; Float_t MuonSF = 1;
@@ -192,6 +204,10 @@ void WZAnalysis::InsideLoop(){
       TLep_IsPromptW = lepW.idDecayMode;
       TLep_IsPromptZ2 = lepZ2.idDecayMode;
       TLep_IsPromptZ1 = lepZ1.idDecayMode;
+      
+      
+      std::cout << "test 3 " << std::endl;
+
 
       for(Int_t i = 0; i < TNFOLeps; i++){
         TLep_isConvVeto[i]  = tempLeps.at(i).isConvVeto;
@@ -206,14 +222,20 @@ void WZAnalysis::InsideLoop(){
       TMZ1W  = (lepZ1.p + lepW.p).M();
       TMZ2W  = (lepZ2.p + lepW.p).M();
       if(passesMCTruth(fakeableLeptons,1,3)){
+        std::cout << "test 4 " << std::endl;
+
         //std::cout << "Pass 3Tight, hasOS,passMC\n";
         if (lepZ1.Pt() > 25 && lepZ2.Pt() > 15 && lepW.Pt() > 20){//3 lepton, has OSSF, leptons assigned to W and Z. Fill histos from here onwards
-        
+          std::cout << "test 5 " << std::endl;
+
           if(TMath::Abs(TMll - nomZmass)< 15. && TMinMll > 4. && TM3l > 100.  ){ //  Z window + exlcude low masses + M_3l selection 
+            std::cout << "test ------6 " << std::endl;
+
             // The last two cuts define the Control/Signal regions
             
             // Signal Region
             if(TMET > 30.){   // MET > 30 always
+              std::cout << "test -------7 " << std::endl;
 
               if(TNBtags == 0){ //Exactly 0 btags
                 TIsSR   = true;
@@ -235,6 +257,8 @@ void WZAnalysis::InsideLoop(){
           } 
         }
       }
+    std::cout << "test FIN " << std::endl;
+
     fTree[wP] -> Fill();  //Skimming for 3 FO; remember to use TNTightLeptons == 3 for plotting!!!
     }
   }
@@ -467,8 +491,8 @@ void WZAnalysis::GetGenJetVariables(std::vector<Jet> genJets, std::vector<Jet> m
   nFiduJets = 0; nFidubJets = 0; 
   Int_t nGenJets = genJets.size();
   Int_t nmcJets = mcJets.size();
-  for(Int_t i = 0; i < nGenJets; i++) if(genJets.at(i).p.Pt() > 30 && TMath::Abs(genJets.at(i).p.Eta()) < 2.4)                         nFiduJets++;
-  for(Int_t i = 0; i <  nmcJets; i++) if(mcJets.at(i).p.Pt()  > 30 && TMath::Abs(mcJets.at(i).Eta())    < 2.4 && mcJets.at(i).isBtag)  nFidubJets++;
+  for(Int_t i = 0; i < nGenJets; i++) if(genJets.at(i).p.Pt() > 50 && TMath::Abs(genJets.at(i).p.Eta()) < 4.7)                         nFiduJets++;
+  for(Int_t i = 0; i <  nmcJets; i++) if(mcJets.at(i).p.Pt()  > 50 && TMath::Abs(mcJets.at(i).Eta())    < 4.7 && mcJets.at(i).isBtag)  nFidubJets++;
 }
 
 void WZAnalysis::GetMET(){

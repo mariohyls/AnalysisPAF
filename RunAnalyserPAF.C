@@ -34,7 +34,7 @@ void RunAnalyserPAF(TString sampleName  = "TTbar_Powheg", TString Selection = "S
 
 //=============================================================================
 void GetCount(vector<TString> Files, Bool_t IsData = false, Bool_t pickler = false);
-Float_t GetXsec(TString sampleName);
+Float_t GetXsec(TString sampleName, Bool_t IsData = false);
 
 
 
@@ -99,19 +99,29 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
 		    Long64_t nEvents, Long64_t FirstEvent,
 		    Float_t uxsec, TString options) {
 
-  outputFileName = sampleName;
+  TString outputFileName = sampleName;
 
   sampleName = "/pool/ciencias/HeppyTrees/RA7/estructura/wzSkimmed/"\
-  + sampleName + "/treeProducerSusyMultilepton/tree.root";
+  + outputFileName + "/treeProducerSusyMultilepton/tree.root";
+
 
   cout << "sampleName: " << sampleName << endl;
 
-  uxsec = GetXsec(sampleName);
+
+  //---------------------------------------------------------------------------  
+  Bool_t  G_IsData        = false;
+  if(sampleName.Contains("Run") || sampleName.Contains("run")){ G_IsData = true; }
+  uxsec = GetXsec(sampleName, G_IsData);
   std::cout << "xsec vale " << uxsec << std::endl;
+  //---------------------------------------------------------------------------
 
   // By adding this line we get all the helper functions in PAF (PAF_INFO...)
   PAFProject* myProject = 0;
 
+
+  //TString deleteme = "helloPleaseSomeoneKillMe";
+  //if (deleteme.Contains("Please"))
+  //  std::cout << "you're dead!";
 
 
   if(sampleName.BeginsWith("Check:")){
@@ -151,7 +161,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
 
   // VARIABLES TO BE USED AS PARAMETERS...
   Float_t G_Event_Weight  = 1.0;         
-  Bool_t  G_IsData        = false;       
+  G_IsData        = false;       
   Bool_t  G_IsMCatNLO     = false;
   Bool_t  G_DoSystematics = false;
   G_IsFastSim     = false;
@@ -202,14 +212,21 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   //Temporal fix
   //TString pathToFiles = "/pool/ciencias/HeppyTreesSummer16/v2/";
   //Deal with data samples
-  if(sampleName == "DoubleEG" || sampleName == "DoubleMuon" || sampleName == "MuonEG" || sampleName.BeginsWith("Single")){
+  //if(sampleName == "DoubleEG" || sampleName == "DoubleMuon" || sampleName == "MuonEG" || sampleName.BeginsWith("Single")){
+
+  std::cout << "OutputName " << outputFileName << std::endl;
+
+  if (false){// (outputFileName.Contains("DoubleEG") || outputFileName.Contains("DoubleMuon") || outputFileName.Contains("MuonEG")   || outputFileName.Contains("Single")){
+    
+    std::cout << outputFileName << " is data! " << std::endl;
     if(verbose) cout << ("\033[1;39m >>> DATA SAMPLES \033[0m\n");
     G_Event_Weight = 1.; G_IsData = true;
 
     TString *datasuffix             = SelectedDataset;
     const unsigned int nDataSamples = SelectedNdata;
     for(unsigned int i = 0; i < nDataSamples; i++) {
-      TString asample = Form("Tree_%s_%s",sampleName.Data(), datasuffix[i].Data());
+      //TString asample = Form("Tree_%s_%s",sampleName.Data(), datasuffix[i].Data());
+      TString asample = outputFileName;
       //myProject->AddDataFiles(dm->GetRealDataFiles(asample));
       vector<TString> tempFiles = dm->GetRealDataFiles(asample);
 			Files.insert(Files.end(), (tempFiles).begin(), (tempFiles).end());
@@ -219,9 +236,9 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   }
   else{ // Deal with MC samples 
     G_IsData = false;
-    if(options.Contains("Data") || options.Contains("data")) G_IsData = true;
+    if(sampleName.Contains("Run") || sampleName.Contains("run")){ G_IsData = true;G_Event_Weight = 1.;}
     TString theSample = "";
-    if(sampleName.BeginsWith("LocalFile:")|| sampleName.BeginsWith("/")){ // LocalFile
+    if (true){//(sampleName.BeginsWith("LocalFile:")|| sampleName.BeginsWith("/")){ // LocalFile
       theSample = sampleName.ReplaceAll("LocalFile:", ""); 
       if(verbose) cout << " >>> Analysing a local sample: " << theSample << endl;
       TString sampleChain = TString(sampleName);
@@ -248,7 +265,11 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
       GetCount(Files, G_IsData, Selection=="WZ");
       xsec = uxsec;
       G_Event_Weight = xsec/Count;
-      if(options.Contains("Data") || options.Contains("data")) G_Event_Weight = 1;
+      if(outputFileName.Contains("Run") || outputFileName.Contains("run"))
+      {
+        std::cout << "is Data!!" << std::endl;
+        G_Event_Weight = 1;
+      }
       if(SumOfWeights != Count){ // is aMCatNLO
         G_IsMCatNLO = true;
         if(verbose) cout << " >>> This is an aMCatNLO sample!!" << endl;
@@ -312,7 +333,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
         if(verbose) cout << " >>> This is an aMCatNLO sample!!" << endl;
         G_Event_Weight = xsec/SumOfWeights;
       }
-      else{  G_Event_Weight = xsec/Count;}
+      else{ G_Event_Weight = xsec/Count;}
     }
     if(sampleName.Contains("FastSim") || options.Contains("FastSim")) G_IsFastSim = true;
   }
@@ -545,11 +566,13 @@ void GetCount(std::vector<TString> Files, Bool_t IsData, Bool_t pickler = false)
 
 
 
-Float_t GetXsec(TString sampleName){
-  TTree* tree;
-	if(verbose) cout << "\033[1;30m=================================================\033[0m\n";
+Float_t GetXsec(TString sampleName, Bool_t G_IsData){
 
-  cout << "sampleName: " << sampleName << endl;
+  if (G_IsData)
+    return 1;
+
+  TTree* tree;
+  cout << "sampleName (no data): " << sampleName << endl;
 
   f = TFile::Open(sampleName);
   f->GetObject("tree", tree);
