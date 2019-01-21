@@ -26,7 +26,7 @@ Histo* Plot::GetH(TString sample, TString sys, Int_t type){
   h->doStackOverflow = doStackOverflow;
   h->SetStyle(); 
 //  h->Sumw2();
-  delete ah;
+//delete ah;
   return h;
 }
 
@@ -70,7 +70,7 @@ void Plot::AddSample(TString p, TString pr, Int_t type, Int_t color, TString sys
 }
 
 void Plot::GetStack(){ // Sets the histogram hStack
-  if(hStack) delete hStack;
+  //if(hStack) delete hStack;
   hStack = new THStack(varname, "");
   Int_t nBkgs = VBkgs.size();
   if (nBkgs == 0 && verbose){ std::cout << "Having no backgrounds was a mistake, you'll pay for that with a SegFault" << std::endl;}
@@ -78,7 +78,7 @@ void Plot::GetStack(){ // Sets the histogram hStack
     hStack->Add((TH1F*) VBkgs.at(i));
   }
   if(doExternalSyst) return;
-  if(hAllBkg) delete hAllBkg;
+  //if(hAllBkg) delete hAllBkg;
   hAllBkg = (new Histo(*(TH1F*) hStack->GetStack()->Last(), 3))->CloneHisto("AllBkg");
   hAllBkg->doStackOverflow = doStackOverflow;
   hAllBkg->SetStyle();
@@ -109,12 +109,12 @@ Float_t Plot::GetAllBkg(Int_t ibin){
 void Plot::SetData(){  // Returns histogram for Data
   if(!doData){
     GetStack();
-    if(hData) delete hData;
-    if(gROOT->FindObject("HistoData")) delete gROOT->FindObject("HistoData");
+    //if(hData) delete hData;
+    //if(gROOT->FindObject("HistoData")) delete gROOT->FindObject("HistoData");
     hData = hAllBkg;
   }
-  if(hData) delete hData;
-  if(gROOT->FindObject("HistoData")) delete gROOT->FindObject("HistoData");
+  //if(hData) delete hData;
+  //if(gROOT->FindObject("HistoData")) delete gROOT->FindObject("HistoData");
   
   if(x0 != xN) hData = new Histo(TH1F("HistoData", dataTag, nb, x0, xN));
   else         hData = new Histo(TH1F("HistoData", dataTag, nb, vbins));
@@ -234,8 +234,8 @@ void Plot::AddStatError(TString process){
   //cout << " --> process = " << process << endl;
   Float_t nom; Float_t stat;
   TString nameUp = process + "_statUp"; TString nameDown = process + "_statDown";
-  if(gROOT->FindObject(nameUp)) delete gROOT->FindObject(nameUp);
-  if(gROOT->FindObject(nameDown)) delete gROOT->FindObject(nameDown);
+  //if(gROOT->FindObject(nameUp)) delete gROOT->FindObject(nameUp);
+  //if(gROOT->FindObject(nameDown)) delete gROOT->FindObject(nameDown);
   Histo *hUp   = (Histo*)GetHisto(process)->CloneHisto(nameUp);
   Histo* hDown = (Histo*)GetHisto(process)->CloneHisto(nameDown);
   hUp->SetDirectory(0); hDown->SetDirectory(0);
@@ -979,7 +979,7 @@ void Plot::DrawComp(TString tag, bool doNorm, TString options){
   c->Print( dir + plotname + ".png", "png");
   c->Print( dir + plotname + ".pdf", "pdf");
   c->Print( dir + plotname + ".eps", "eps");
-  if(htemp) delete htemp;
+  //if(htemp) delete htemp;
   ratios.clear();
 }
 
@@ -1068,6 +1068,7 @@ void Plot::DrawStack(TString tag){
   if(doSignal && (SignalStyle == "scan" || SignalStyle == "BSM" || SignalStyle == "") )
     for(Int_t  i = 0; i < nSignals; i++) VSignals.at(i)->Draw(SignalDrawStyle + "same");
 
+  cout << "Continuing...2" << endl;
   //---------  Draw systematic errors
   //if(doSignal && (SignalStyle == "scan" || SignalStyle == "BSM" || SignalStyle == "") )
   hAllBkg->SetFillStyle(3444); // 3444 o 3004 (3145 default here)
@@ -1075,6 +1076,7 @@ void Plot::DrawStack(TString tag){
   hAllBkg->SetLineColor(StackErrorColor);
   hAllBkg->SetLineWidth(0);
   hAllBkg->SetMarkerSize(0);
+  cout << "Continuing...3" << endl;
   if(doSys && ((Int_t) VSystLabel.size() > 0 || doExternalSyst))  hAllBkg->Draw("same,e2");
 
   //--------- Draw Data
@@ -1189,7 +1191,7 @@ void Plot::DrawStack(TString tag){
     c->Print( dir + plotname + ".png", "png");
     c->Print( dir + plotname + ".eps", "eps");
     c->SaveAs( dir + plotname + ".root");
-    delete c;
+  //delete c;
   //if(leg) delete leg; if(hratioerr) delete hratioerr; if(hline) delete hline;
   //VStackedSignals.clear();
 }
@@ -1801,9 +1803,9 @@ void Plot::Reset(){
   VSumHistoSystDown.clear();
   VSystLabel.clear();
   VTagDataSamples.clear();
-  if(hratio) delete hratio;
-  if(TotalSysUp) delete TotalSysUp;
-  if(TotalSysDown) delete TotalSysDown;
+//  if(hratio) delete hratio;
+//  if(TotalSysUp) delete TotalSysUp;
+//  if(TotalSysDown) delete TotalSysDown;
 //  if(hData && doData) delete hData;
 //  if(hStack) delete hStack;
 //  if(hAllBkg) delete hAllBkg;

@@ -337,6 +337,7 @@ void EventBuilder::Initialise(){
   gOptions     = GetParam<TString>("_options");
   gIs2017 = false;
   if(gOptions.Contains("2017")) gIs2017 = true;
+  std::cout << "Is trigger 2017" << gIs2017 << std::endl;
   gChannel = -1;
   nProcessedEvents = 0; 
   //if(gSelection == iTopSelec) gIsFastSim = true;
@@ -351,7 +352,7 @@ void EventBuilder::Initialise(){
   else if(gSampleName.Contains("SingleElec")) gIsSingleElec = true;
   else if(gSampleName.Contains("SingleMuon")) gIsSingleMuon = true;
   else if(gSampleName.Contains("MuonEG"))     gIsMuonEG     = true;
-
+  std::cout << "Is trigger 2017" << gIsDoubleElec << gIsDoubleMuon << gIsSingleElec << gIsSingleMuon << gIsMuonEG << std::endl;
   fPUWeight     = new PUWeight(19468.3, Moriond17MC_PoissonOOTPU, "2016_Moriond17");
   if (!gIsData) {
     fPUWeightUp   = new PUWeight(18494.9,  Moriond17MC_PoissonOOTPU, "2016_Moriond17"); //  18494.9
@@ -373,7 +374,7 @@ void EventBuilder::Initialise(){
 
 void EventBuilder::InsideLoop(){
   nProcessedEvents++;
-  std::cout << nProcessedEvents << std::endl;
+  std::cout << "nEvents" << nProcessedEvents << std::endl;
   // >>>>>>>>>>>>>> Get selected leptons:
   selLeptons = GetParam<std::vector<Lepton>>("selLeptons");
   vetoLeptons = GetParam<std::vector<Lepton>>("vetoLeptons");
@@ -439,12 +440,21 @@ void EventBuilder::InsideLoop(){
     else if (flavChannel == iElec && TrigElEl()) passTrigger2 = true;
   }
 
+  else if(gSelection == iWZSelec){
+    if      (TrigElMu()) passTrigger = true;
+    else if (TrigMuMu()) passTrigger = true;
+    else if (TrigElEl()) passTrigger = true;
+    
+    
+
+  }
   else{
     if      (gChannel == iElMu && TrigElMu()) passTrigger = true;
     else if (gChannel == iMuon && TrigMuMu()) passTrigger = true;
     else if (gChannel == iElec && TrigElEl()) passTrigger = true;
     //else if ((gChannel == iTriLep || gChannel == iFourLep) && Trig3l4l()) passTrigger = true;
   }
+  std::cout << "Trigger passes: " << TrigElMu() << TrigMuMu() << TrigElEl() << std::endl;
 
   METfilters = PassesMETfilters();
 

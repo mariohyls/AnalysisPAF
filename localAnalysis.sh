@@ -11,7 +11,7 @@ do
     else 
         [[ "$line" =~ ^'#'.*$ ]] && continue
         echo $line
-        root -l -b -q 'RunAnalyserPAF.C("'${line}'"      ,"WZ",  8)'
+        root -l -b -q 'RunAnalyserPAF.C("'${line}'"      ,"WZ",  4)'
 
     fi
 

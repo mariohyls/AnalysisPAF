@@ -101,6 +101,9 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
 
   TString outputFileName = sampleName;
 
+  Int_t iChunk = Int_t(uxsec);
+
+
   sampleName = "/pool/ciencias/HeppyTrees/RA7/estructura/wzSkimmed/"\
   + outputFileName + "/treeProducerSusyMultilepton/tree.root";
 
@@ -135,9 +138,10 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
 
   if(options.Contains("noForcedHadd")) nukeIt=false;
 
-  Int_t iChunk = Int_t(uxsec);
+
   if(FirstEvent != 0) verbose = true;
-  TString orig_sampleName = sampleName;
+  //TString orig_sampleName = sampleName;
+  TString orig_sampleName = outputFileName;
 
   if(options.Contains("xsec:")){
     pos = options.Index("xsec:") + 5;
@@ -419,7 +423,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   else if(FirstEvent != 0){
     if(FirstEvent == 1) FirstEvent = 0;
     cout << Form("\033[1;36m >>> Running chunk number %i, starting in event %lli... will loop over %lli events (last event = %lli)\n\n\033[0m", iChunk, FirstEvent, nEvents, FirstEvent + nEvents);
-    sampleName += Form("_%i", iChunk);
+    outputFileName += Form("_%i", iChunk);
   }
  
   if(options.Contains("pretend")) return; 
@@ -470,7 +474,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   // Parameters for the analysis
   //----------------------------------------------------------------------------
   // COMMON PARAMETERS
-  myProject->SetInputParam("sampleName",        sampleName       );
+  myProject->SetInputParam("sampleName",        outputFileName   );
   myProject->SetInputParam("IsData",            G_IsData         );
   myProject->SetInputParam("weight",            G_Event_Weight   );
   myProject->SetInputParam("IsMCatNLO",         G_IsMCatNLO      );
