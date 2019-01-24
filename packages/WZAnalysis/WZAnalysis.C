@@ -225,7 +225,7 @@ void WZAnalysis::InsideLoop(){
         std::cout << "test 4 " << std::endl;
 
         //std::cout << "Pass 3Tight, hasOS,passMC\n";
-        if (lepZ1.Pt() > 25 && lepZ2.Pt() > 15 && lepW.Pt() > 20){//3 lepton, has OSSF, leptons assigned to W and Z. Fill histos from here onwards
+        if (lepZ1.Pt() > 25 && lepZ2.Pt() > 10 && lepW.Pt() > 25){//3 lepton, has OSSF, leptons assigned to W and Z. Fill histos from here onwards
           std::cout << "test 5 " << std::endl;
 
           if(TMath::Abs(TMll - nomZmass)< 15. && TMinMll > 4. && TM3l > 100.  ){ //  Z window + exlcude low masses + M_3l selection 

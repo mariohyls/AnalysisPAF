@@ -124,16 +124,16 @@ void DrawPlots(TString cutName, TString treeName = ""){
 
   TString outputDirName = "/mnt_pool/ciencias_users/user/gonzalezm/www/" + treeName + "_v2/" + cutName + "/";
   outputDirName = "/mnt_pool/ciencias_users/user/gonzalezm/www/";
-  DrawPlot("TMET",  cut, "All", 11, 30, 140, "E_{T}^{miss} [GeV]", "TMET_log", cutName, outputDirName, yMax, yMin);
+  //DrawPlot("TMET",  cut, "All", 11, 30, 140, "E_{T}^{miss} [GeV]", "TMET_log", cutName, outputDirName, yMax, yMin);
 
 
   //DrawPlot("TMET",  cut, "All", 11, 30, 140, "E_{T}^{miss} [GeV]", "TMET_log", cutName, outputDirName, yMax, yMin);
-  //DrawPlot("TM3l",  cut, "All", 20, 100,300, "M_{3l} [GeV]", "TM3l_log", cutName, outputDirName, yMax, yMin);
+  DrawPlot("TM3l",  cut, "All", 20, 100,300, "M_{3l} [GeV]", "TM3l_log", cutName, outputDirName, yMax, yMin);
   
   //===================
   //Float_t M3lBins[] = {0,100,200,300,400,500,600,700,800,900,1000,1200,1500,2000};
   //===================
-  /*
+  
   //DrawPlot("TM3l",  cut, "All", 13, M3lBins, "M_{3l} [GeV]", cutName);
   //DrawPlot("TMtWZ",  cut, "All", 13, 0, 200, "M_{WZ} [GeV]", cutName, cutName, outputDirName, yMax, yMin);
   DrawPlot("TMtW",  cut, "All", 10 , 0 , 200 , "M_{T}^{W} [GeV]", "TMtW_log", cutName, outputDirName, yMax, yMin);
@@ -159,10 +159,10 @@ void DrawPlots(TString cutName, TString treeName = ""){
   DrawPlot("TLep_PtZ2",  cut, "All", 10,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin);
   DrawPlot("TLep_PtW",  cut, "All", 10,0 , 200 , "p_{T}^{lepW} [GeV]", "TLep_PtW", cutName, outputDirName, yMax, yMin);
   
-  */
   DrawPlot("TLep_EtaZ1",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin);
   DrawPlot("TLep_EtaZ2",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin);
   DrawPlot("TLep_EtaW",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin);
+  
 
   gApplication->Terminate();
 }
@@ -217,7 +217,6 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
 
 
     // MONTE CARLOS
-    //p->SetCut(cut);
 
     p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itBkg, kViolet+2);  // X+gamma 
 
@@ -226,20 +225,22 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
 
     p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itBkg, kGreen-9); // RareSM
 
-//
-//    p->AddSample("WZTo3LNu, WZTo3LNu_amcatnlo, WZTo3LNu_Ptz_0_200_aTGC, WZTo3LNu_Ptz_0_200_aTGC_show, \
-//    WZTo3LNu_Ptz_200_300_aTGC, WZTo3LNu_Ptz_200_300_aTGC_show, WZTo3LNu_Ptz_300_aTGC, WZTo3LNu_Ptz_300_aTGC_show", \
-//    "WZ",  itSignal, kYellow);    // WZ  
-//
-//
-//    p->AddSample("WZTo3LNu_amcatnlo", "WZ",  itSignal, kYellow);    // WZ  
-
     p->AddSample("WZTo3LNu", "WZ",  itSignal, kYellow);    // WZ  
 
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itBkg, kCyan-5); // RareSM
 
     p->AddSample("tZq_ll",    "tZq",  itBkg, kGreen); // RareSM 
 
+
+    // DATOS
+  	p->AddSample("MuonEG, DoubleEG, DoubleMuon, SingleElectron, SingleMuon", "Data",  itData);             // Data
+
+    cut.ReplaceAll("TNTightLeps", "TNFOLeps");
+    p->SetWeight("GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), 1)/35980."); //Fake rates for the fakerate god  
+    //DATA FAKES
+    p->AddSample("MuonEG, DoubleEG, DoubleMuon, SingleElectron, SingleMuon",                     "non-Pr",  itBkg, kBlue);//,"0", "fakes"); 
+    cut.ReplaceAll("TNFOLeps","TNTightLeps"); 
+    p->SetWeight("TWeight");
 
 
 
@@ -274,6 +275,7 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     */
   }
   else {//Load DATA FAKES, APPLY FAKE RATE FILES!!!
+    std::cout << "here be dragons!" << std::endl;
     p->SetCut(cut);
     p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG_amcatnlo, WWG_amcatnlo",                "X+#gamma", itBkg, kViolet+2);  // X+gamma 
     p->SetCut(cut);
@@ -317,6 +319,7 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
   p->PrintYields();
   p->PrintSamples();
   p->doSetLogy = doLog;
+  std::cout << "hello?" << std::endl;
   //p->DrawStack("0", 1);
   //p->doSetLogy = true;
   p->DrawStack("log");

@@ -1,4 +1,5 @@
-
+set -e 
+set -o pipefail
 
 echo "Reading samples from 'localSamples.conf'"
 
@@ -11,7 +12,7 @@ do
     else 
         [[ "$line" =~ ^'#'.*$ ]] && continue
         echo $line
-        root -l -b -q 'RunAnalyserPAF.C("'${line}'"      ,"WZ",  4)'
+        root -l -b -q 'RunAnalyserPAF.C("'${line}'"      ,"WZ",  20, -5)'
 
     fi
 

@@ -140,7 +140,7 @@ Bool_t EventBuilder::PassesDoubleMuonTrigger(){
       return pass;
     }
     // Run B-G or MC
-    if ( (gIsData && run <= 280385) || (!gIsData)){
+    if ( (gIsData && run <= 2800919) || (!gIsData)){
       pass = (Get<Int_t>("HLT_BIT_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v")  ||
 	      Get<Int_t>("HLT_BIT_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v"));
       return pass;
@@ -199,14 +199,14 @@ Bool_t EventBuilder::PassesElMuTrigger(){
       return pass;
     }
     // Run B-G or MC
-    if ( (gIsData && run <= 280385) || (!gIsData)){
+    if ( (gIsData && run <= 280919) || (!gIsData)){
       pass = ( Get<Int_t>("HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v")  ||
-	       Get<Int_t>("HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") );
+	       Get<Int_t>("HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v") );
       return pass;
     }
     else{
       pass = ( Get<Int_t>("HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v")||
-	       Get<Int_t>("HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") );
+	       Get<Int_t>("HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v") );
       return pass;
     }
   }
@@ -496,7 +496,7 @@ Bool_t EventBuilder::TrigElEl(){
   Bool_t pass = false;
   if(gIsData){
     if     (gIsDoubleElec) pass =  PassesDoubleElecTrigger();
-    else if(gIsSingleElec) pass = !PassesDoubleElecTrigger() && PassesSingleElecTrigger();
+    else if(gIsSingleElec) pass = PassesDoubleElecTrigger() || PassesSingleElecTrigger();
   }
   else pass = PassesDoubleElecTrigger() || PassesSingleElecTrigger();
   return pass;
@@ -506,7 +506,7 @@ Bool_t EventBuilder::TrigMuMu(){
   Bool_t pass = false;
   if(gIsData){
     if     (gIsDoubleMuon) pass =  PassesDoubleMuonTrigger();
-    else if(gIsSingleMuon) pass = !PassesDoubleMuonTrigger() && PassesSingleMuonTrigger();
+    else if(gIsSingleMuon) pass =  PassesDoubleMuonTrigger() || PassesSingleMuonTrigger();
   }
   else pass = PassesDoubleMuonTrigger() || PassesSingleMuonTrigger();
   return pass;
@@ -516,8 +516,8 @@ Bool_t EventBuilder::TrigElMu(){
   Bool_t pass = false;
   if(gIsData){
     if(gIsMuonEG    ) pass =  PassesElMuTrigger();
-    else if(gIsSingleMuon) pass = !PassesElMuTrigger() &&  PassesSingleMuonTrigger();
-    else if(gIsSingleElec) pass = !PassesElMuTrigger() && !PassesSingleMuonTrigger() && PassesSingleElecTrigger();
+    else if(gIsSingleMuon) PassesElMuTrigger() || PassesSingleMuonTrigger() || PassesSingleElecTrigger();
+    else if(gIsSingleElec) pass = PassesElMuTrigger() || PassesSingleMuonTrigger() || PassesSingleElecTrigger();
   }
   else pass = PassesElMuTrigger() || PassesSingleMuonTrigger() || PassesSingleElecTrigger();
   return pass;

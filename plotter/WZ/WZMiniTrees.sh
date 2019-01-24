@@ -1,6 +1,12 @@
 #
 #Di and tri bosons
 #
+
+
+root -l -b -q 'RunAnalyserPAF.C("WZTo3LNu"   , "WZ", 32, -4)'
+
+
+
 #root -l -b -q 'RunAnalyserPAF.C("WZTo3LNu"   , "WZ", 32, -4)' #
 #root -l -b -q 'RunAnalyserPAF.C("WWTo2L2Nu"   ,"WZ", 32)' #
 #root -l -b -q 'RunAnalyserPAF.C("ZZZ"      ,"WZ",  32)' #

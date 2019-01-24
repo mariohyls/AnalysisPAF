@@ -1039,7 +1039,7 @@ void LeptonSelector::InsideLoop(){
         if(!isGoodLepton(tL)) vetoLeptons.push_back(tL);
       }
       else if(gSelection == iWZSelec){ 
-        tL.idMVA = lepMVASUSYId;
+        tL.idMVA = getSUSYMVAId(tL, 1);
         vetoLeptons.push_back(tL);  
       }
       else vetoLeptons.push_back(tL);
