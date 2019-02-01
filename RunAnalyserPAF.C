@@ -582,7 +582,7 @@ Float_t GetXsec(TString sampleName, Bool_t G_IsData){
   f->GetObject("tree", tree);
   Float_t treeXSec;
   tree->SetBranchAddress("xsec", &treeXSec);
-  tree->GetEntry(5);
+  tree->GetEntry(5); //Funnily this will break if you have a tree with <= 4 events
   std::cout << "HERE BE DRAGONS:   " << treeXSec << std::endl;
   f->Close(); 
   return treeXSec;
