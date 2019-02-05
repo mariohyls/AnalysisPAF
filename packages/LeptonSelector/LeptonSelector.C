@@ -618,12 +618,10 @@ Bool_t LeptonSelector::isGoodLepton(Lepton lep){
     if(lep.isMuon){
       if(!isVetoLepton(lep)) isMVALepton = false;
       if(!getGoodVertex(iWZMVA)) isMVALepton = false;
-      if(TightCharge != 2) isMVALepton = false;
       // Added MVA selection in the analysis
     }
     if(lep.isElec){
       if(!isVetoLepton(lep)) isMVALepton = false;
-      if(TightCharge != 2) isMVALepton = false;
       if(!getGoodVertex(iWZMVA)) isMVALepton = false;
       if(!convVeto){ 
         isMVALepton = false;
@@ -765,17 +763,19 @@ Bool_t LeptonSelector::isVetoLepton(Lepton lep){
       if(!isLooseLepton(lep)) return false;
       if(!mediumMuonId) return false;
       if(!getGoodVertex(iWZMVA)) return false;
+      if(TightCharge < 2) return false;
     }
     if(lep.isElec){
       if(lep.p.Pt() < 10) return false;
       if(!isLooseLepton(lep)) return false;
       if(!getGoodVertex(iWZMVA)) return false;
       if(lostHits > 0) return false;
-      if((sigmaIEtaIEta > 0.011 )*(TMath::Abs(lep.p.Eta()) < 0.8) || (sigmaIEtaIEta > 0.011)*(TMath::Abs(lep.p.Eta()) < 1.479)*(TMath::Abs(lep.p.Eta()) > 0.8) || (sigmaIEtaIEta > 0.030)*(TMath::Abs(lep.p.Eta()) > 1.479)) return false;
+      if((abs(sigmaIEtaIEta) > 0.011 )*(TMath::Abs(lep.p.Eta()) < 0.8) || (abs(sigmaIEtaIEta) > 0.011)*(TMath::Abs(lep.p.Eta()) < 1.479)*(TMath::Abs(lep.p.Eta()) > 0.8) || (abs(sigmaIEtaIEta) > 0.030)*(TMath::Abs(lep.p.Eta()) > 1.479)) return false;
       if((HoE > 0.1)*(TMath::Abs(lep.p.Eta()) < 0.8) || (HoE > 0.1)*(TMath::Abs(lep.p.Eta()) < 1.479)*(TMath::Abs(lep.p.Eta()) > 0.8) || (HoE > 0.07)*(TMath::Abs(lep.p.Eta()) > 1.479)) return false;
-      if((dEtaSC > 0.01)*(TMath::Abs(lep.p.Eta()) < 0.8) || (dEtaSC > 0.01)*(TMath::Abs(lep.p.Eta()) < 1.479)*(TMath::Abs(lep.p.Eta()) > 0.8) || (dEtaSC > 0.008)*(TMath::Abs(lep.p.Eta()) > 1.479)) return false;
-      if((dPhiSC > 0.04)*(TMath::Abs(lep.p.Eta()) < 0.8) || (dPhiSC > 0.04)*(TMath::Abs(lep.p.Eta()) < 1.479)*(TMath::Abs(lep.p.Eta()) > 0.8) || (dPhiSC > 0.07)*(TMath::Abs(lep.p.Eta()) > 1.479)) return false;
+      if((abs(dEtaSC) > 0.01)*(TMath::Abs(lep.p.Eta()) < 0.8) || (abs(dEtaSC) > 0.01)*(TMath::Abs(lep.p.Eta()) < 1.479)*(TMath::Abs(lep.p.Eta()) > 0.8) || (abs(dEtaSC) > 0.008)*(TMath::Abs(lep.p.Eta()) > 1.479)) return false;
+      if((abs(dPhiSC) > 0.04)*(TMath::Abs(lep.p.Eta()) < 0.8) || (abs(dPhiSC) > 0.04)*(TMath::Abs(lep.p.Eta()) < 1.479)*(TMath::Abs(lep.p.Eta()) > 0.8) || (abs(dPhiSC) > 0.07)*(TMath::Abs(lep.p.Eta()) > 1.479)) return false;
       if((eImpI<-0.05) || (eImpI > 0.01)*(TMath::Abs(lep.p.Eta()) < 0.8) || (eImpI > 0.01)*(TMath::Abs(lep.p.Eta()) < 1.479)*(TMath::Abs(lep.p.Eta()) > 0.8) || (eImpI > 0.005)*(TMath::Abs(lep.p.Eta()) > 1.479)) return false;
+      if(TightCharge < 2) return false;
     }
     if (lepMVASUSYId < 0) return false;
     return true;
@@ -945,6 +945,7 @@ Bool_t LeptonSelector::isLooseLepton(Lepton lep){
 
 void LeptonSelector::InsideLoop(){
   evt = Get<ULong64_t>("evt");
+  //std::cout << "............." << evt << "............." << std::endl;
   // Clear vectors...
   selLeptons.clear();
   looseLeptons.clear();
