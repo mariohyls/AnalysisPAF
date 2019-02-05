@@ -98,8 +98,8 @@ void JetSelector::Initialise(){
     taggerName="CSVv2";
     stringWP = "Medium";
     jet_MaxEta = 2.4;
-    jet_MinPt  = 25;
-    vetoJet_minPt = 25;
+    jet_MinPt  = 30;
+    vetoJet_minPt = 30;
     vetoJet_maxEta = 2.4;
     minDR = 0.4;
   }
