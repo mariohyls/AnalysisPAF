@@ -51,6 +51,7 @@ void WZAnalysis::Initialise(){
   InitHistos();
 }
 
+
 void WZAnalysis::InsideLoop(){
   // Vectors with the objects
   genLeptons  = GetParam<vector<Lepton>>("genLeptons");
@@ -83,6 +84,16 @@ void WZAnalysis::InsideLoop(){
   std::cout << "test 0 " << std::endl;
 
 
+
+
+  std::cout << "evtNum: " << TEvtNum << std::endl;
+
+
+
+
+
+
+
   for (int wP = 0; wP < nWPoints; wP++){
     // Leptons and Jets
     //std::cout << "Create vectors\n";
@@ -109,9 +120,16 @@ void WZAnalysis::InsideLoop(){
 
     std::cout << TNOSSF<< " " << passTrigger<< " "<< passMETfilters<< " "<< std::endl;
 
-    if(TNFOLeps == 3 && TNOSSF > 0  && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
+
+
+
+
+
+    if((TNFOLeps == 3 || TNFOLeps == 4) && TNOSSF > 0  && passTrigger && passMETfilters){ 
     //if(TNFOLeps < 3 && TNOSSF > 0  && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
-   
+
+
+
       std::cout << "test 2 " << std::endl;
 
 
@@ -157,6 +175,11 @@ void WZAnalysis::InsideLoop(){
       TIsSR   = false;
       TIsCRDY = false;
       TIsCRTT = false;  
+
+      TIsCRtop = false;  
+      TIsCRConv = false;
+      TIsCRZZ = false;
+
       TIsNewCRDY = false;
       TIsNewCRTT = false;  
       if(gIsData) TWeight = 1;
@@ -175,6 +198,8 @@ void WZAnalysis::InsideLoop(){
       lepZ1 = tempLeps.at(0);
       lepZ2 = tempLeps.at(1);
       lepW  = tempLeps.at(2);
+
+
 
       TLep_PtZ1 = lepZ1.Pt();
       TLep_EtaZ1 = lepZ1.Eta();
@@ -221,8 +246,66 @@ void WZAnalysis::InsideLoop(){
       TMll  = (lepZ1.p + lepZ2.p).M();
       TMZ1W  = (lepZ1.p + lepW.p).M();
       TMZ2W  = (lepZ2.p + lepW.p).M();
-      if(passesMCTruth(fakeableLeptons,1,3)){
+
+
+      // Let's define here the CRZZ region
+      if (TNFOLeps == 4 && passesMCTruth(fakeableLeptons,1,4))
+      {
+        lepExtra = tempLeps.at(3);
+        TLep_PtExtra = lepExtra.Pt();
+
+        if (lepZ1.Pt() > 25 && lepZ2.Pt() > 10 && lepW.Pt() > 25 && lepExtra.Pt() > 10)
+        {
+          if(TMath::Abs(TMll - nomZmass) < 15. && TMinMll > 4. && TM3l > 100.  )
+          {
+            if(TNBtags == 0)
+            {
+              if(TMET > 30.)
+              {
+                TIsCRZZ = true;
+              }
+            }
+          }
+        }
+      }      
+
+
+      if(passesMCTruth(fakeableLeptons,1,3) && TNFOLeps == 3){
         std::cout << "test 4 " << std::endl;
+
+
+        // Let's define here the CRConv region
+        if (lepZ1.Pt() > 25 && lepZ2.Pt() > 10 && lepW.Pt() > 25)
+        {
+          if(TMath::Abs(TMll - nomZmass) > 15. && TMinMll > 4. && TM3l < 100.  )
+          {
+            if(TNBtags == 0)
+            {
+              if(TMET <= 30.)
+              {
+                TIsCRConv = true;
+              }
+            }
+          }
+        }  
+
+        // Let's define here the CRtop region
+        if (lepZ1.Pt() > 25 && lepZ2.Pt() > 10 && lepW.Pt() > 25)
+        {
+          if(TMath::Abs(TMll - nomZmass) > 5. && TMinMll > 4. && TM3l > 100.  )
+          {
+            if(TNBtags > 0)
+            {
+              if(TMET > 30.)
+              {
+                TIsCRtop = true;
+              }
+            }
+          }
+        }
+
+
+
 
         //std::cout << "Pass 3Tight, hasOS,passMC\n";
         if (lepZ1.Pt() > 25 && lepZ2.Pt() > 10 && lepW.Pt() > 25){//3 lepton, has OSSF, leptons assigned to W and Z. Fill histos from here onwards
@@ -335,6 +418,12 @@ void WZAnalysis::SetJetVariables(TTree* iniTree){
 void WZAnalysis::SetEventVariables(TTree* iniTree){
   iniTree->Branch("TWeight",      &TWeight,      "TWeight/F");
   iniTree->Branch("TIsSR"  ,      &TIsSR  ,      "TIsSR/B"  );
+
+  //the new two branches:
+  iniTree->Branch("TIsCRtop"  ,      &TIsCRtop  ,      "TIsCRtop/B"  );
+  iniTree->Branch("TIsCRZZ"  ,      &TIsCRZZ  ,      "TIsCRZZ/B"  );
+  iniTree->Branch("TIsCRConv"  ,      &TIsCRConv  ,      "TIsCRConv/B"  );
+  
   iniTree->Branch("TIsCRTT",      &TIsCRTT,      "TIsCRTT/B");
   iniTree->Branch("TIsCRDY",      &TIsCRDY,      "TIsCRDY/B");
   iniTree->Branch("TIsNewCRTT",      &TIsNewCRTT,      "TIsNewCRTT/B");

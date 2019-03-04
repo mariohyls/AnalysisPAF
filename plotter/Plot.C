@@ -705,10 +705,12 @@ Float_t Plot::GetYield(TString pr, TString systag, Int_t ibin){
 }
 
 TLegend* Plot::SetLegend(){ // To be executed before using the legend
+  
+  float fLegX1 = 0.7, fLegY1 = 0.6, fLegX2 = 0.9, fLegY2 = 0.93;
   TLegend* leg = new TLegend(fLegX1, fLegY1, fLegX2, fLegY2);
-  leg->SetTextSize(LegendTextSize);
+  leg->SetTextSize(0.04);
   leg->SetBorderSize(0);
-  leg->SetFillColor(10);
+  //leg->SetFillColor(10);
   Float_t MinYield = 0; 
   int nVBkgs = VBkgs.size();
   if(nVBkgs > 0 && hAllBkg) MinYield = hAllBkg->GetYield()/5000;
@@ -728,7 +730,7 @@ TLegend* Plot::SetLegend(){ // To be executed before using the legend
       for(Int_t i = 0; i < nSignals; i++){
        // if(VSignals.at(i)->GetProcess() == SignalProcess){
           VSignals.at(i)->SetLineWidth(2);
-          VSignals.at(i)->SetFillColor(0);
+          VSignals.at(i)->SetFillColor(VSignals.at(i)->GetColor());
           VSignals.at(i)->AddToLegend(leg, doYieldsInLeg);  
        // }
       }
@@ -924,6 +926,7 @@ void Plot::DrawComp(TString tag, bool doNorm, TString options){
   vector<TH1F*> ratios;
   TH1F* htemp = NULL;
   hratio = (TH1F*)VSignals.at(0)->Clone("hratio_sig");
+  std::cout << "Helloooooooooooooooooooo!" << std::endl;
   SetHRatio();
   if(options.Contains("ratiocolor")){
     for(Int_t  i = 1; i < nsamples; i++){

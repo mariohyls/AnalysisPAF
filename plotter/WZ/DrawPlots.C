@@ -6,8 +6,8 @@ R__LOAD_LIBRARY(Plot.C+)
 #include "Looper.h"
 #include "Plot.h"
 
-void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0, Float_t binN, TString Xtitle, TString varName="", TString cutName="", TString outFolder="/nfs/fanae/user/gonzalezm/www/", Float_t yMax=2000, Float_t yMin=1);
-void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t* binN, TString Xtitle, TString varName="", TString cutName="", TString outFolder="/nfs/fanae/user/gonzalezm/www/", Float_t yMax=2000, Float_t yMin=1);
+void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0, Float_t binN, TString Xtitle, TString varName="", TString cutName="", TString outFolder="~/gonzalezm/www/", Float_t yMax=2000, Float_t yMin=1);
+void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t* binN, TString Xtitle, TString varName="", TString cutName="", TString outFolder="~/gonzalezm/www/", Float_t yMax=2000, Float_t yMin=1);
 TString NameOfTree = "medium"; //"nolepMVA", "medium", "top"
 bool doMC = false;
 TString pathToTree = "";
@@ -39,6 +39,10 @@ TString CRTTmee      = "TMath::Abs(TMll - 91.1876)> 5. && TNTightLeps == 3 && TL
 TString CRDYeee      = "TMath::Abs(TMll - 91.1876)< 15. && TNTightLeps == 3 && TLep_PtZ1 > 25 && TLep_PtZ2 > 15 && TLep_PtW > 20 && TM3l > 100 && TMinMll > 4 && TNBtags == 0 && TMET < 30 && TChannel == 0";
 TString CRTTeee      = "TMath::Abs(TMll - 91.1876)> 5. && TNTightLeps == 3 && TLep_PtZ1 > 25 && TLep_PtZ2 > 15 && TLep_PtW > 20 && TM3l > 100 && TMinMll > 4 && TNBtags > 0 && TMET > 30 && TChannel == 0";
 
+TString CRtop      = "TIsCRtop == 1 && TNTightLeps == 3";
+TString CRZZ      = "TIsCRZZ == 1 && TNTightLeps == 4";
+TString CRConv      = "TIsCRConv == 1 && TNTightLeps == 3";
+
 TString newCRDY      = "TIsNewCRDY == 1 && TNTightLeps == 3";
 TString newCRTT      = "TIsNewCRTT == 1 && TNTightLeps == 3";
 
@@ -65,6 +69,9 @@ void DrawPlots(TString cutName, TString treeName = ""){
 
   TString cut;
   if     (cutName == "SR" ){ cut = SR ; yMax = 1800; yMin = 1;}
+  else if(cutName == "CRtop" ){ cut = CRtop ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRZZ" ){ cut = CRZZ ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRConv" ){ cut = CRConv ; yMax = 600; yMin = 1;}
   else if(cutName == "CRDY" ){ cut = CRDY ; yMax = 600; yMin = 1;}
   else if(cutName == "CRTT" ){ cut = CRTT ; yMax = 120; yMin = 1;}
   else if(cutName == "CRDYmmm" ){ cut = CRDYmmm ; yMax = 300; yMin = 1;}
@@ -123,12 +130,11 @@ void DrawPlots(TString cutName, TString treeName = ""){
   std::cout << "hello!" << std::endl;
 
   TString outputDirName = "/mnt_pool/ciencias_users/user/gonzalezm/www/" + treeName + "_v2/" + cutName + "/";
-  outputDirName = "/mnt_pool/ciencias_users/user/gonzalezm/www/";
   //DrawPlot("TMET",  cut, "All", 11, 30, 140, "E_{T}^{miss} [GeV]", "TMET_log", cutName, outputDirName, yMax, yMin);
 
 
   //DrawPlot("TMET",  cut, "All", 11, 30, 140, "E_{T}^{miss} [GeV]", "TMET_log", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TM3l",  cut, "All", 20, 100,300, "M_{3l} [GeV]", "TM3l_log", cutName, outputDirName, yMax, yMin);
+  //DrawPlot("TM3l",  cut, "All", 20, 100,300, "M_{3l} [GeV]", "TM3l_log", cutName, outputDirName, yMax, yMin);
   
   //===================
   //Float_t M3lBins[] = {0,100,200,300,400,500,600,700,800,900,1000,1200,1500,2000};
@@ -136,15 +142,19 @@ void DrawPlots(TString cutName, TString treeName = ""){
   
   //DrawPlot("TM3l",  cut, "All", 13, M3lBins, "M_{3l} [GeV]", cutName);
   //DrawPlot("TMtWZ",  cut, "All", 13, 0, 200, "M_{WZ} [GeV]", cutName, cutName, outputDirName, yMax, yMin);
-  DrawPlot("TMtW",  cut, "All", 10 , 0 , 200 , "M_{T}^{W} [GeV]", "TMtW_log", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TMll",  cut, "All", 8, 70 , 110 , "M^{Z} [GeV]", "TMll_log", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_PtZ1",  cut, "All", 10,0 , 200 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1_log", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_PtZ2",  cut, "All", 10,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2_log",  cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_PtW",  cut, "All", 10,0 , 200 , "p_{T}^{lepW} [GeV]", "TLep_PtW_log", cutName, outputDirName, yMax, yMin);
+  int nDef = 30;
+  
+  
+  //DrawPlot("TMtW",  cut, "All", nDef , 0 , 200 , "M_{T}^{W} [GeV]", "TMtW_log", cutName, outputDirName, yMax, yMin);
+  //DrawPlot("TMll",  cut, "All",nDef, 70 , 110 , "M^{Z} [GeV]", "TMll_log", cutName, outputDirName, yMax, yMin);
+  //DrawPlot("TLep_PtZ1",  cut, "All", nDef,0 , 200 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1_log", cutName, outputDirName, yMax, yMin);
+  //DrawPlot("TLep_PtZ2",  cut, "All", nDef,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2_log",  cutName, outputDirName, yMax, yMin);
+  //DrawPlot("TLep_PtW",  cut, "All", nDef,0 , 200 , "p_{T}^{lepW} [GeV]", "TLep_PtW_log", cutName, outputDirName, yMax, yMin);
   //
-  DrawPlot("TLep_EtaZ1",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1_log", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_EtaZ2",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2_log", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_EtaW",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW_log", cutName, outputDirName, yMax, yMin);
+  
+  //DrawPlot("TLep_EtaZ1",  cut, "All", nDef,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1_log", cutName, outputDirName, yMax, yMin);
+  //DrawPlot("TLep_EtaZ2",  cut, "All", nDef,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2_log", cutName, outputDirName, yMax, yMin);
+  //DrawPlot("TLep_EtaW",  cut, "All", nDef,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW_log", cutName, outputDirName, yMax, yMin);
   //
   //doLog = false;
   DrawPlot("TMET",  cut, "All", 11, 30, 140, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin);
@@ -152,16 +162,16 @@ void DrawPlots(TString cutName, TString treeName = ""){
   DrawPlot("TMET",  cut, "All", 39, 30, 420, "E_{T}^{miss} [GeV]", cutName);
   ////Float_t M3lBins[] = {0,100,200,300,400,500,600,700,800,900,1000,1200,1500,2000};
   //DrawPlot("TM3l",  cut, "All", 13, M3lBins, "M_{3l} [GeV]", cutName);
-  //DrawPlot("TMtWZ",  cut, "All", 13, M3lBins, "M_{WZ} [GeV]", cutName);
-  DrawPlot("TMtW",  cut, "All", 10 , 0 , 200 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin);
+  DrawPlot("TMtWZ",  cut, "All", 13, M3lBins, "M_{WZ} [GeV]", cutName);
+  DrawPlot("TMtW",  cut, "All", nDef , 0 , 200 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin);
   DrawPlot("TMll",  cut, "All", 8, 70 , 110 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_PtZ1",  cut, "All", 10,0 , 200 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_PtZ2",  cut, "All", 10,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_PtW",  cut, "All", 10,0 , 200 , "p_{T}^{lepW} [GeV]", "TLep_PtW", cutName, outputDirName, yMax, yMin);
+  DrawPlot("TLep_PtZ1",  cut, "All", nDef,0 , 200 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1", cutName, outputDirName, yMax, yMin);
+  DrawPlot("TLep_PtZ2",  cut, "All", nDef,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin);
+  DrawPlot("TLep_PtW",  cut, "All", nDef,0 , 200 , "p_{T}^{lepW} [GeV]", "TLep_PtW", cutName, outputDirName, yMax, yMin);
   
-  DrawPlot("TLep_EtaZ1",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_EtaZ2",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin);
-  DrawPlot("TLep_EtaW",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin);
+  DrawPlot("TLep_EtaZ1",  cut, "All", nDef,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin);
+  DrawPlot("TLep_EtaZ2",  cut, "All", nDef,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin);
+  DrawPlot("TLep_EtaW",  cut, "All", nDef,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin);
   
 
   gApplication->Terminate();
@@ -180,6 +190,7 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
   //gSystem->Exec("cp /nfs/fanae/user/gonzalezm/www/SR/index.php " + outFolder);
 
   Plot* p = new Plot(var, cut, chan, nbins, bin0, binN, "Title", Xtitle);
+  outFolder = outFolder + cutName;
   std::cout << outFolder << std::endl;
   if(outFolder!="") p->SetPlotFolder(outFolder);
   p->SetPath(pathToTree); p->SetTreeName(NameOfTree);
@@ -196,6 +207,7 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
   AddFRhisto("fakerate_light_EWKino_Moriond2017_36p5fb.root", "FR_susy_wpV_mu_data_comb", "mvaVTFRhistoMu"); //Book Muon Fake Rate
   std::cout << "_______________________________ADD SAMPLES______________________________________________" << std::endl;
   if (NameOfTree == "top" ){//Load MC FAKES
+  /*
     p->SetWeight("TWeight");
     p->SetCut(cut); //Allow Conversions
     p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG_amcatnlo, WWG_amcatnlo",                "X+#gamma", itBkg, kViolet+2);  // X+gamma 
@@ -210,38 +222,55 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     p->AddSample("DYJetsToLL_M50_MLM_0, DYJetsToLL_M50_MLM_1, DYJetsToLL_M50_MLM_2, DYJetsToLL_M50_MLM_3, WJetsToLNu_MLM", "V + Jets", itBkg, kOrange);
     p->SetCut(cut); //Add the MC fakes
   	p->AddSample("DoubleMuon, DoubleEG, MuonEG, SingleMuon, SingleElec",                     "Data",  itData);             // Data
+    */
   }
 
   else if (NameOfTree == "veryTight"){//Load DATA FAKES, APPLY FAKE RATE FILES!!!
     std::cout << "very Tight!" << std::endl;
+    p->SetCut(cut);
 
-
+    //--------------------------------------------------------------------------
     // MONTE CARLOS
+
 
     p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itBkg, kViolet+2);  // X+gamma 
 
-    p->AddSample("TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1, TTWToLNu_ext2_part1, \
-    TTWToLNu_ext2_part2",    "ttX",  itBkg, kRed-10); // RareSM
+    //p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1, TTWToLNu_ext2_part1, \
+    //TTWToLNu_ext2_part2",    "ttX",  itBkg, kRed-10); // RareSM
 
-    p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itBkg, kGreen-9); // RareSM
+    p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", \
+    "ttX",  itBkg, kRed-10); // RareSM
+    
+    p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV_o",  itBkg, kGreen-9); // RareSM
+    
 
-    p->AddSample("WZTo3LNu", "WZ",  itSignal, kYellow);    // WZ  
+    p->SetCut(cut);
+    //p->AddSample("WZTo3LNu, WZ", "WZ!",  itSignal, kYellow+8);    // WZ, queda más alta
+
+    p->AddSample("WZTo3LNu", "WZ",  itSignal, kYellow+8);    // WZ  
+
 
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itBkg, kCyan-5); // RareSM
 
     p->AddSample("tZq_ll",    "tZq",  itBkg, kGreen); // RareSM 
 
+    p->AddSample("tZW_ll",    "tZW",  itBkg, kGreen); // RareSM 
+
 
     // DATOS
-  	p->AddSample("MuonEG, DoubleEG, DoubleMuon, SingleElectron, SingleMuon", "Data",  itData);             // Data
 
+  	p->AddSample("dataRun2016BCDEFGH", "Data",  itData);             // Data
+
+    p->SetCut(cut + " && TConvNumber == 0");
     cut.ReplaceAll("TNTightLeps", "TNFOLeps");
-    p->SetWeight("GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), 1)/35980."); //Fake rates for the fakerate god  
+    p->SetCut(cut); //Data fakes, relax tight to FO
+    p->SetWeight("GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), 1)/35980"); //Fake rates for the fakerate god  
     //DATA FAKES
-    p->AddSample("MuonEG, DoubleEG, DoubleMuon, SingleElectron, SingleMuon",                     "non-Pr",  itBkg, kBlue);//,"0", "fakes"); 
-    cut.ReplaceAll("TNFOLeps","TNTightLeps"); 
-    p->SetWeight("TWeight");
-
+    p->AddSample("dataRun2016BCDEFGH",                     "non-Pr",  itBkg, kBlue,"0", "fakes"); 
+    //PROMPT SUB
+    p->SetWeight("TWeight*GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), -1)"); //Fake rates for the promptsub god  
+    p->SetCut(cut);
+    //--------------------------------------------------------------------------
 
 
     /*
@@ -275,6 +304,7 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     */
   }
   else {//Load DATA FAKES, APPLY FAKE RATE FILES!!!
+  /*
     std::cout << "here be dragons!" << std::endl;
     p->SetCut(cut);
     p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG_amcatnlo, WWG_amcatnlo",                "X+#gamma", itBkg, kViolet+2);  // X+gamma 
@@ -302,10 +332,11 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     p->AddSample(" tZq_ll_1, tZq_ll_2, tZq_ll_3",    "tZq",  itBkg, kGreen); // RareSM
     p->AddSample("TTZToLL_M1to10,TTZToLLNuNu,TTWToLNu,TTTT,TTHNonbb",    "ttX",  itBkg, kRed-10); // RareSM
     p->SetCut(cut + " && TConvNumber == 0");
+    */
   }
   std::cout << "_______________________________DO THE PLOTS______________________________________________" << std::endl;
-  p->SetPlotMaximum(10000000*doLog + yMax);
-  p->SetPlotMinimum(1*doLog+yMin);
+
+  //p->SetPlotMaximum(1000000);
   p->SetSignalProcess("WZ");
   //p->ScaleSignal(10);
   p->SetSignalStyle("Fill");
@@ -318,11 +349,10 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
   cout << "Corresponding to cut: " << cut << endl;
   p->PrintYields();
   p->PrintSamples();
-  p->doSetLogy = doLog;
-  std::cout << "hello?" << std::endl;
-  //p->DrawStack("0", 1);
+  p->doSetLogy = false;
+  p->DrawStack("0");
   //p->doSetLogy = true;
-  p->DrawStack("log");
+  //p->DrawStack("log");
   //p->PrintSystYields();
   delete p;
   

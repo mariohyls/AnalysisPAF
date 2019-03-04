@@ -3,7 +3,6 @@
 #
 
 
-root -l -b -q 'RunAnalyserPAF.C("WZTo3LNu"   , "WZ", 32, -4)'
 
 
 

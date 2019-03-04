@@ -19,6 +19,6 @@ echo "Hello from $DIR! I'm the bash script you just ran :D"
 
 # Running with -q proof is only different in that it has a small time limit
 # (~2h). -q batch has a 2 days limit.
-qsub -q batch -l nodes=gae013.ciencias.uniovi.es:ppn=32 -F $DIR "$DIR"/send.sh
+qsub -q batch -l nodes=gae013.ciencias.uniovi.es:ppn=15 -F $DIR "$DIR"/send.sh
 echo "ruuuning!"
 

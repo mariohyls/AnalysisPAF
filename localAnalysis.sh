@@ -12,7 +12,7 @@ do
     else 
         [[ "$line" =~ ^'#'.*$ ]] && continue
         echo $line
-        root -l -b -q 'RunAnalyserPAF.C("'${line}'"      ,"WZ",  20, -5)'
+        root -l -b -q 'RunAnalyserPAF.C("'${line}'"      ,"WZ", 14)'
 
     fi
 
