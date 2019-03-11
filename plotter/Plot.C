@@ -706,7 +706,7 @@ Float_t Plot::GetYield(TString pr, TString systag, Int_t ibin){
 
 TLegend* Plot::SetLegend(){ // To be executed before using the legend
   
-  float fLegX1 = 0.7, fLegY1 = 0.6, fLegX2 = 0.9, fLegY2 = 0.93;
+  //float fLegX1 = 0.75, fLegY1 = 0.6, fLegX2 = 0.95, fLegY2 = 0.93;
   TLegend* leg = new TLegend(fLegX1, fLegY1, fLegX2, fLegY2);
   leg->SetTextSize(0.04);
   leg->SetBorderSize(0);
@@ -759,8 +759,12 @@ TLegend* Plot::SetLegend(){ // To be executed before using the legend
 
 void Plot::SetLegendPosition(TString pos)
 {
-  if (pos=="UR")
-    SetLegendPosition(0.70, 0.65, 0.93, 0.93);
+  if (pos=="UURR")
+    SetLegendPosition(0.81, 0.56, 0.95, 0.92);
+  else if (pos=="URR")
+    SetLegendPosition(0.81, 0.55, 0.95, 0.9);
+  else if (pos=="UR")
+    SetLegendPosition(0.76, 0.55, 0.9, 0.9);
   else if (pos == "UL")
     SetLegendPosition(0.15, 0.65, 0.38, 0.85);
   else if (pos == "DL")
@@ -1018,7 +1022,7 @@ void Plot::DrawStack(TString tag){
       hSignal->SetLineWidth(3);
       hSignal->SetLineColor(hSignal->GetColor());
       hSignal->SetFillColor(hSignal->GetColor());
-      //hStack->Add(hSignal);
+      hStack->Add(hSignal);
     }   
   }
 /*  TH1F* hSigDraw;
@@ -1065,13 +1069,11 @@ void Plot::DrawStack(TString tag){
   if (centerYaxis) hStack->GetYaxis()->CenterTitle();
   hStack->GetXaxis()->SetLabelSize(0.0);
 
-  cout << "Continuing..." << endl;
 
   //--------- Draw signal
   if(doSignal && (SignalStyle == "scan" || SignalStyle == "BSM" || SignalStyle == "") )
     for(Int_t  i = 0; i < nSignals; i++) VSignals.at(i)->Draw(SignalDrawStyle + "same");
 
-  cout << "Continuing...2" << endl;
   //---------  Draw systematic errors
   //if(doSignal && (SignalStyle == "scan" || SignalStyle == "BSM" || SignalStyle == "") )
   hAllBkg->SetFillStyle(3444); // 3444 o 3004 (3145 default here)
@@ -1079,7 +1081,6 @@ void Plot::DrawStack(TString tag){
   hAllBkg->SetLineColor(StackErrorColor);
   hAllBkg->SetLineWidth(0);
   hAllBkg->SetMarkerSize(0);
-  cout << "Continuing...3" << endl;
   if(doSys && ((Int_t) VSystLabel.size() > 0 || doExternalSyst))  hAllBkg->Draw("same,e2");
 
   //--------- Draw Data
@@ -1116,9 +1117,10 @@ void Plot::DrawStack(TString tag){
   pratio->cd();
   TLine *hline = nullptr;
   if(RatioYtitle == "S/B"){
-    cout << "Ratio: S/B!\n";
+    cout << "[Plot::DrawStack] INFO: Ratio: S/B!\n";
     if(!doSignal) cout << "[Plot::DrawStack] WARNING: cannot print ratio Signal/Background without signal!!" << endl;
     else{
+      
       Float_t StoBmean = hSignal->GetYield()/hAllBkg->GetYield();
       hratio = (TH1F*)hSignal->Clone("hratio");
       float xlow = hratio->GetBinLowEdge(1);
@@ -1158,13 +1160,14 @@ void Plot::DrawStack(TString tag){
   else{ // ratio Data/MC
     //if(!doData) cout << "[Plot::DrawStack] WARNING: cannot print ratio Data/MC without data!!" << endl;
     //else{
+      cout << "[Plot::DrawStack] INFO: Ratio is DATA/MC!\n";
       if(doData) hratio = (TH1F*)hData->Clone("hratio");
       else       hratio = (TH1F*)hAllBkg->Clone("hratio");
       // ratio by hand so systematic (background) errors don't get summed up to statistical ones (data)
       for (int bin = 0; bin < hratio->GetNbinsX(); ++bin){
         if (hratio->GetBinContent(bin+1) > 0){ 
-          hratio->SetBinContent( bin+1, hratio->GetBinContent(bin+1) / hAllBkg->GetBinContent(bin+1));
-          hratio->SetBinError  ( bin+1, hratio->GetBinError  (bin+1) / hAllBkg->GetBinContent(bin+1));
+          hratio->SetBinContent( bin+1, hratio->GetBinContent(bin+1) / (hAllBkg->GetBinContent(bin+1) + hSignal->GetBinContent(bin+1)));
+          hratio->SetBinError  ( bin+1, hratio->GetBinError  (bin+1) / (hAllBkg->GetBinContent(bin+1) + hSignal->GetBinContent(bin+1)));
         }
         else{ hratio->SetBinError  ( bin+1, 0.); }
       }
