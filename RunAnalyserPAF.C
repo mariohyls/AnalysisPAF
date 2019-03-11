@@ -28,7 +28,8 @@ R__LOAD_LIBRARY(FunctionsPAF.C+)
 #include <fstream>
 
 //=============================================================================
-void RunAnalyserPAF(TString sampleName  = "TTbar_Powheg", TString Selection = "StopDilep", 
+void RunAnalyserPAF(TString sampleName  = "TTbar_Powheg", TString samplePath = "asd",
+        TString Selection = "StopDilep", 
 		    Int_t nSlots = 1, Long64_t nEvents = 0, Long64_t FirstEvent = 0, 
 		    Float_t uxsec = 1.0, TString options = "");
 
@@ -95,7 +96,7 @@ TString SelectedTab = tab2016;
 
 //=============================================================================
 // Main function
-void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots, 
+void RunAnalyserPAF(TString sampleName, TString samplePath, TString Selection, Int_t nSlots, 
 		    Long64_t nEvents, Long64_t FirstEvent,
 		    Float_t uxsec, TString options) {
 
@@ -104,8 +105,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   Int_t iChunk = Int_t(uxsec);
 
 
-  sampleName = "/pool/ciencias/HeppyTrees/RA7/estructura/wzSkimmed/"\
-  + outputFileName + "/treeProducerSusyMultilepton/tree.root";
+  sampleName = samplePath + outputFileName + "/treeProducerSusyMultilepton/tree.root";
 
 
   cout << "sampleName: " << sampleName << endl;
@@ -405,7 +405,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
       firstEvent = (nTrueEntries/nChunks)*i+1;
       nEvents = nTrueEntries/nChunks;
       if(i == nChunks - 1) nEvents = nTrueEntries-firstEvent;
-      RunAnalyserPAF(orig_sampleName, Selection, nSlots, nEvents, firstEvent, i, options);
+      RunAnalyserPAF(orig_sampleName, samplePath, Selection, nSlots, nEvents, firstEvent, i, options);
       //gSystem->Exec("resetpaf -a");
       //gSystem->Exec("resetpaf -a");
     }
@@ -502,6 +502,7 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   myProject->AddSelectorPackage("JetSelector");
   myProject->AddSelectorPackage("EventBuilder");
   if      (sel == iStopSelec)    myProject->AddSelectorPackage("StopAnalysis");
+  else if (sel == iWZSelec  )    myProject->AddSelectorPackage("WZAnalysis");
   else if (sel == ittDMSelec)    myProject->AddSelectorPackage("ttDM");
   else if (sel == iTopSelec )    myProject->AddSelectorPackage("TopAnalysis");
   else if (sel == ittHSelec )    myProject->AddSelectorPackage("ttHAnalysis");
@@ -513,7 +514,6 @@ void RunAnalyserPAF(TString sampleName, TString Selection, Int_t nSlots,
   }
   else if (sel == iWWSelec  )    myProject->AddSelectorPackage("WWAnalysis");
   else if (sel == iHWWSelec )    myProject->AddSelectorPackage("HWWAnalysis");
-  else if (sel == iWZSelec  )    myProject->AddSelectorPackage("WZAnalysis");
   else if (sel == iTWTTbarSelec) myProject->AddSelectorPackage("TWTTbarAnalysis");
   else                         PAF_FATAL("RunAnalyserPAF", "No selector defined for this analysis!!!!");
   
