@@ -127,6 +127,10 @@ class WZAnalysis : public PAFChainItemSelector{
 
     // Event classification
     Bool_t  TIsSR;
+    Bool_t  TIsSRVBS;
+    Bool_t  passMandEtaRequieriments;
+    Bool_t  passEtaFilters;
+
     Bool_t  TIsCRTT;
 
     Bool_t  TIsCRtop;
@@ -187,6 +191,9 @@ class WZAnalysis : public PAFChainItemSelector{
     Int_t TNJets;            
     Int_t TNBtags;
     Float_t TJet_Pt[20];
+    Float_t TJet_Px[20];
+    Float_t TJet_Py[20];
+    Float_t TJet_Pz[20];
     Float_t TJet_Eta[20];
     Float_t TJet_Phi[20];
     Float_t TJet_E[20];
