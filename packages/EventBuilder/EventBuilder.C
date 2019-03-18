@@ -550,7 +550,7 @@ Bool_t EventBuilder::Trig3l4l() {
 Bool_t EventBuilder::PassesMETfilters(){
   // https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2#Moriond_2017
   if(gIsFastSim) return true;
-  if(gSelection != iWZSelec && (Get<Int_t>("Flag_HBHENoiseFilter") &&        // MET filters for data and MC
+  if( (Get<Int_t>("Flag_HBHENoiseFilter") &&        // MET filters for data and MC
         Get<Int_t>("Flag_HBHENoiseIsoFilter") &&
         Get<Int_t>("Flag_EcalDeadCellTriggerPrimitiveFilter") &&
         Get<Int_t>("Flag_goodVertices") &&
@@ -564,7 +564,7 @@ Bool_t EventBuilder::PassesMETfilters(){
         //( Get<Int_t>("Flag_eeBadScFilter")) ) // for Data
         //( gIsData && Get<Int_t>("Flag_globalTightHalo2016Filter")) ) // for Data
     ) return true;
-  else if(gSelection == iWZSelec && (Get<Int_t>("Flag_HBHENoiseFilter") &&        // MET filters for data and MC
+  else if(false && (Get<Int_t>("Flag_HBHENoiseFilter") &&        // MET filters for data and MC
         Get<Int_t>("Flag_HBHENoiseIsoFilter") &&
         Get<Int_t>("Flag_EcalDeadCellTriggerPrimitiveFilter") &&
         Get<Int_t>("Flag_goodVertices") &&

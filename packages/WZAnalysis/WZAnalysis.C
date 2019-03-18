@@ -51,6 +51,7 @@ void WZAnalysis::Initialise(){
   InitHistos();
 }
 
+
 void WZAnalysis::InsideLoop(){
   // Vectors with the objects
   genLeptons  = GetParam<vector<Lepton>>("genLeptons");
@@ -83,6 +84,16 @@ void WZAnalysis::InsideLoop(){
   std::cout << "test 0 " << std::endl;
 
 
+
+
+  std::cout << "evtNum: " << TEvtNum << std::endl;
+
+
+
+
+
+
+
   for (int wP = 0; wP < nWPoints; wP++){
     // Leptons and Jets
     //std::cout << "Create vectors\n";
@@ -109,11 +120,15 @@ void WZAnalysis::InsideLoop(){
 
     std::cout << TNOSSF<< " " << passTrigger<< " "<< passMETfilters<< " "<< std::endl;
 
-    if(TNFOLeps == 3 && TNOSSF > 0  && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
-    //if(TNFOLeps < 3 && TNOSSF > 0  && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
-   
-      std::cout << "test 2 " << std::endl;
 
+
+
+
+
+    if((TNFOLeps >= 3) && TNOSSF > 0  && passTrigger && passMETfilters){ 
+    //if(TNFOLeps < 3 && TNOSSF > 0  && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
+
+    std::cout << "test 2 " << std::endl;
 
     // Deal with weights:
     //std::cout << "Pass 3FO\n";
@@ -155,8 +170,16 @@ void WZAnalysis::InsideLoop(){
   
       TWeight = NormWeight*ElecSF*MuonSF*TrigSF*PUSF;
       TIsSR   = false;
+      TIsSRVBS = false;
+      passMandEtaRequieriments = false;
+      passEtaFilters = false;
       TIsCRDY = false;
       TIsCRTT = false;  
+
+      TIsCRtop = false;  
+      TIsCRConv = false;
+      TIsCRZZ = false;
+
       TIsNewCRDY = false;
       TIsNewCRTT = false;  
       if(gIsData) TWeight = 1;
@@ -175,6 +198,8 @@ void WZAnalysis::InsideLoop(){
       lepZ1 = tempLeps.at(0);
       lepZ2 = tempLeps.at(1);
       lepW  = tempLeps.at(2);
+
+
 
       TLep_PtZ1 = lepZ1.Pt();
       TLep_EtaZ1 = lepZ1.Eta();
@@ -221,8 +246,146 @@ void WZAnalysis::InsideLoop(){
       TMll  = (lepZ1.p + lepZ2.p).M();
       TMZ1W  = (lepZ1.p + lepW.p).M();
       TMZ2W  = (lepZ2.p + lepW.p).M();
-      if(passesMCTruth(fakeableLeptons,1,3)){
+
+
+      //WZ VBS region
+      Bool_t tooManyLeps = false; // TODO: move me to the header
+      if (TNFOLeps >= 3 && (passesMCTruth(fakeableLeptons,1,TNFOLeps)))
+      {
+
+        // extra leps must have pt < 10 GeV
+        for (int a = 3; a < TNFOLeps; a++)
+        {
+          if (tempLeps.at(a).Pt() > 10)
+          {
+            tooManyLeps = true;
+          }
+        }
+
+
+        if (lepZ1.Pt() > 25 && lepZ2.Pt() > 15 && lepW.Pt() > 20 && tooManyLeps == false)
+        {
+          if (TMath::Abs(TMll - nomZmass) < 15. && TMinMll > 4. && TM3l > 100.)
+          {
+            passEtaFilters = true;
+            for (int a  = 0; a < TNFOLeps; a++)
+            { 
+              if ((tempLeps.at(a).isMuon && tempLeps.at(a).Eta() >= 2.4) || 
+                  (tempLeps.at(a).isElec && tempLeps.at(a).Eta() >= 2.5))
+                  {passEtaFilters = false; break;}
+            }
+
+            if (passEtaFilters && TMET > 30)
+            {
+              Bool_t badBJets = false; // B jets with pt > 30 & eta < 4.7 
+              Int_t numGoodJets = 0; // pt > 50 GeV y eta < 4.7, 2 MIN.
+              std::vector <Int_t> indexes = {}; // where are the good jets
+
+              for (int a = 0; a < TNJets; a++)
+              {
+                if (TJet_Pt[a] > 30 && TJet_Eta[a] < 4.7 && TJet_isBJet[a])
+                {
+                  badBJets = true; break;
+                }
+
+                if (TJet_Pt[a] > 50 && TJet_Eta[a] < 4.7)
+                {
+                  numGoodJets ++;
+                  indexes.push_back(a);
+                }
+              }
+              
+              passMandEtaRequieriments = false;
+              //bool passMandEtaRequieriments = false; // mjj > 500 GeV, Deta > 2.5
+              if (!badBJets && numGoodJets >= 2)
+              {
+                TLorentzVector jet1;
+                TLorentzVector jet2;
+                for (unsigned int r = 0; r < indexes.size(); r++)
+                {
+                  for (unsigned int s = 0; s < indexes.size(); s++)
+                  {
+                    jet1.SetPxPyPzE(TJet_Px[r], TJet_Py[r], TJet_Pz[r], TJet_E[r]);
+                    jet2.SetPxPyPzE(TJet_Px[s], TJet_Py[s], TJet_Pz[s], TJet_E[s]);
+
+                    if ((jet1 + jet2).M() > 500 && \
+                        abs(TJet_Eta[r] - TJet_Eta[s]) > 2.5)
+                    {
+                      passMandEtaRequieriments = true; break;
+                    }
+                  }
+                }
+
+                if (passMandEtaRequieriments)
+                {
+                  TLorentzVector sum3l = tempLeps.at(0).p + tempLeps.at(1).p + tempLeps.at(2).p;
+                  if (TMath::Abs(sum3l.Eta() - 0.5*(jet1.Eta() + jet2.Eta())) < 2.5)
+                  {
+                    TIsSRVBS = true;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Let's define here the CRZZ region
+      if (TNFOLeps == 4 && passesMCTruth(fakeableLeptons,1,4))
+      {
+        lepExtra = tempLeps.at(3);
+        TLep_PtExtra = lepExtra.Pt();
+
+        {
+          {
+            if(TNBtags == 0)
+            {
+              if(TMET > 30.)
+              {
+                TIsCRZZ = true;
+              }
+            }
+          }
+        }
+      }      
+
+
+      if(passesMCTruth(fakeableLeptons,1,3) && TNFOLeps == 3){
         std::cout << "test 4 " << std::endl;
+
+
+        // Let's define here the CRConv region
+        if (lepZ1.Pt() > 25 && lepZ2.Pt() > 10 && lepW.Pt() > 25)
+        {
+          if(TMath::Abs(TMll - nomZmass) > 15. && TMinMll > 4. && TM3l < 100.  )
+          {
+            if(TNBtags == 0)
+            {
+              if(TMET <= 30.)
+              {
+                TIsCRConv = true;
+              }
+            }
+          }
+        }  
+
+        // Let's define here the CRtop region
+        if (lepZ1.Pt() > 25 && lepZ2.Pt() > 10 && lepW.Pt() > 25)
+        {
+          if(TMath::Abs(TMll - nomZmass) > 5. && TMinMll > 4. && TM3l > 100.  )
+          {
+            if(TNBtags > 0)
+            {
+              if(TMET > 30.)
+              {
+                TIsCRtop = true;
+              }
+            }
+          }
+        }
+
+
+
 
         //std::cout << "Pass 3Tight, hasOS,passMC\n";
         if (lepZ1.Pt() > 25 && lepZ2.Pt() > 10 && lepW.Pt() > 25){//3 lepton, has OSSF, leptons assigned to W and Z. Fill histos from here onwards
@@ -326,6 +489,9 @@ void WZAnalysis::SetJetVariables(TTree* iniTree){
   iniTree->Branch("TNBtags",       &TNBtags,     "TNBtags/I");
   iniTree->Branch("TJet_isBJet",       TJet_isBJet,       "TJet_isBJet[TNJets]/I");
   iniTree->Branch("TJet_Pt",           TJet_Pt,           "TJet_Pt[TNJets]/F");
+  iniTree->Branch("TJet_Px",           TJet_Px,           "TJet_Px[TNJets]/F");
+  iniTree->Branch("TJet_Py",           TJet_Py,           "TJet_Py[TNJets]/F");
+  iniTree->Branch("TJet_Pz",           TJet_Pz,           "TJet_Pz[TNJets]/F");
   iniTree->Branch("TJet_Eta",           TJet_Eta,           "TJet_Eta[TNJets]/F");
   iniTree->Branch("TJet_Phi",           TJet_Phi,           "TJet_Phi[TNJets]/F");
   iniTree->Branch("TJet_E",            TJet_E,            "TJet_E[TNJets]/F");
@@ -335,6 +501,17 @@ void WZAnalysis::SetJetVariables(TTree* iniTree){
 void WZAnalysis::SetEventVariables(TTree* iniTree){
   iniTree->Branch("TWeight",      &TWeight,      "TWeight/F");
   iniTree->Branch("TIsSR"  ,      &TIsSR  ,      "TIsSR/B"  );
+  iniTree->Branch("TIsSRVBS"  ,      &TIsSRVBS  ,      "TIsSRVBS/B"  );
+  iniTree->Branch("passEtaFilters"  ,      &passEtaFilters  ,      "passEtaFilters/B"  );
+  iniTree->Branch("passMandEtaRequieriments"  ,      &passMandEtaRequieriments  ,      "passMandEtaRequieriments/B"  );
+
+  
+
+  //the new two branches:
+  iniTree->Branch("TIsCRtop"  ,      &TIsCRtop  ,      "TIsCRtop/B"  );
+  iniTree->Branch("TIsCRZZ"  ,      &TIsCRZZ  ,      "TIsCRZZ/B"  );
+  iniTree->Branch("TIsCRConv"  ,      &TIsCRConv  ,      "TIsCRConv/B"  );
+  
   iniTree->Branch("TIsCRTT",      &TIsCRTT,      "TIsCRTT/B");
   iniTree->Branch("TIsCRDY",      &TIsCRDY,      "TIsCRDY/B");
   iniTree->Branch("TIsNewCRTT",      &TIsNewCRTT,      "TIsNewCRTT/B");
@@ -350,7 +527,7 @@ Bool_t WZAnalysis::passesMCTruth(std::vector<Lepton> sLep, Int_t addConvs = 1, I
   Int_t passes = 0;
   Int_t convs = 0;
   Int_t otherfakes = 0;
-  for (int i = 0; i < sLep.size(); i++){
+  for (unsigned int i = 0; i < sLep.size(); i++){
     if (gIsData) passes++;
     else{
       Int_t theID = sLep.at(i).idDecayMode;

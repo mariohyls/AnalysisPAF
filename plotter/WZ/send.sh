@@ -21,6 +21,6 @@ source /nfs/fanae/user/gonzalezm/work/PAF_git/PROOF-Analysis-Framework/PAF_setup
 
 #Yahoo
 bash localAnalysis.sh 
-
+#bash mergeBigMC.sh
 
 

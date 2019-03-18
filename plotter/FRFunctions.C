@@ -172,11 +172,11 @@ Float_t GetFRweightlepMVA3lep(Float_t f1, Float_t f2, Float_t f3, Int_t doSub){
   }
 
   if (fWeight == -1.){
-    std::cout << "Setting to 0\n";
+    //std::cout << "Setting to 0\n";
     fWeight = 0;
   }
   fWeight *= doSub;
-  std::cout << fWeight << "," << f[0]<< "," << f[1] << "," << f[2] << std::endl;
+  //std::cout << fWeight << "," << f[0]<< "," << f[1] << "," << f[2] << std::endl;
   return fWeight;
 }
 

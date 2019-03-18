@@ -47,6 +47,7 @@ class WZAnalysis : public PAFChainItemSelector{
     Lepton lepZ1;
     Lepton lepZ2;
     Lepton lepW;
+    Lepton lepExtra;
     Float_t nomZmass = 91.1876;
 
 
@@ -126,7 +127,16 @@ class WZAnalysis : public PAFChainItemSelector{
 
     // Event classification
     Bool_t  TIsSR;
+    Bool_t  TIsSRVBS;
+    Bool_t  passMandEtaRequieriments;
+    Bool_t  passEtaFilters;
+
     Bool_t  TIsCRTT;
+
+    Bool_t  TIsCRtop;
+    Bool_t  TIsCRZZ;
+    Bool_t  TIsCRConv;
+
     Bool_t  TIsCRDY;
     Bool_t  TIsNewCRTT;
     Bool_t  TIsNewCRDY;
@@ -137,6 +147,10 @@ class WZAnalysis : public PAFChainItemSelector{
     Int_t   TChannel;
 
     // Lepton Things
+
+    Float_t TLep_PtExtra;    
+
+
     Float_t TLep_PtZ1;    
     Float_t TLep_PtZ2;
     Float_t TLep_PtW;  
@@ -177,6 +191,9 @@ class WZAnalysis : public PAFChainItemSelector{
     Int_t TNJets;            
     Int_t TNBtags;
     Float_t TJet_Pt[20];
+    Float_t TJet_Px[20];
+    Float_t TJet_Py[20];
+    Float_t TJet_Pz[20];
     Float_t TJet_Eta[20];
     Float_t TJet_Phi[20];
     Float_t TJet_E[20];

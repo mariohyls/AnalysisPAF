@@ -1,3 +1,4 @@
+
 set -e 
 set -o pipefail
 
@@ -6,17 +7,26 @@ echo "Reading samples from 'localSamples.conf'"
 
 while read line;
 do
+    if [[ $line == /pool/* ]]; then
+        path2=${line##*=}
+        echo "changing path to " $path2
+    fi
 
     if [ -z "$line" ]; then
         continue
-    else 
+
+    elif [[ $line != /pool/* ]]; then      
         [[ "$line" =~ ^'#'.*$ ]] && continue
-        echo $line
-        root -l -b -q 'RunAnalyserPAF.C("'${line}'"      ,"WZ",  20, -5)'
+
+        echo "path = " $path2 ";  line =  " $line 
+        pwd
+
+        root -l -b -q 'RunAnalyserPAF.C("'${line}'", "'${path2}'", "WZ", 20, -4)'
 
     fi
 
 done < localSamples.conf
+
 
 
 

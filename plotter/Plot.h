@@ -176,7 +176,7 @@ public:
     LegendTextSize  = 0.065;
     SignalDrawStyle = "hist";
     CMSlabel = "CMS";
-    CMSmodeLabel = "Preliminary";
+    CMSmodeLabel = "Academic";
     textForLumi = "%2.1f fb^{-1} (13 TeV)";
     texlumiX = 0.73; texlumiY = 0.97; texlumiSize = 0.05;
     texPrelimX = 0.15;
