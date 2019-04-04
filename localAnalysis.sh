@@ -21,7 +21,7 @@ do
         echo "path = " $path2 ";  line =  " $line 
         pwd
 
-        root -l -b -q 'RunAnalyserPAF.C("'${line}'", "'${path2}'", "WZ", 20, -4)'
+        root -l -b -q 'RunAnalyserPAF.C("'${line}'", "'${path2}'", "WZ", 1, -4)'
 
     fi
 
