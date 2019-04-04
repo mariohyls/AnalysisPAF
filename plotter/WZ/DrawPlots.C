@@ -6,8 +6,8 @@ R__LOAD_LIBRARY(Plot.C+)
 #include "Looper.h"
 #include "Plot.h"
 
-void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0, Float_t binN, TString Xtitle, TString varName="", TString cutName="", TString outFolder="~/gonzalezm/www/", Float_t yMax=2000, Float_t yMin=1, TString legPos="UR");
-void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t* binN, TString Xtitle, TString varName="", TString cutName="", TString outFolder="~/gonzalezm/www/", Float_t yMax=2000, Float_t yMin=1, TString legPos="UR");
+void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0, Float_t binN, TString Xtitle, TString varName="", TString cutName="", TString outFolder="~/gonzalezm/www/", Float_t yMax=2000, Float_t yMin=1, TString legPos="UR", float scale = 999);
+void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t* binN, TString Xtitle, TString varName="", TString cutName="", TString outFolder="~/gonzalezm/www/", Float_t yMax=2000, Float_t yMin=1, TString legPos="UR", float scale = 999);
 TString NameOfTree = "medium"; //"nolepMVA", "medium", "top"
 bool doMC = false;
 TString pathToTree = "";
@@ -21,12 +21,11 @@ bool doLog;
 TString None         = "TNTightLeps == 3";
 TString AR           = "TIsSR == 1 && TNTightLeps < 3";
 TString SR           = "TIsSR == 1 && TNTightLeps == 3";
-TString SRVBS        = "TIsSRVBS == 1 && TNTightLeps >= 3";
+TString SRVBS        = "TIsSRVBS == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
 TString SRmmm        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 3";
 TString SRmme        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 2";
 TString SRmee        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 1";
 TString SReee        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 0";
-
 
 TString CRDY      = "TMath::Abs(TMll - 91.1876)< 15. && TNTightLeps == 3 && TLep_PtZ1 > 25 && TLep_PtZ2 > 15 && TLep_PtW > 20 && TM3l > 100 && TMinMll > 4 && TNBtags == 0 && TMET < 30";
 TString CRTT      = "TMath::Abs(TMll - 91.1876)> 5. && TNTightLeps == 3 && TLep_PtZ1 > 25 && TLep_PtZ2 > 15 && TLep_PtW > 20 && TM3l > 100 && TMinMll > 4 && TNBtags > 0 && TMET > 30";
@@ -43,6 +42,25 @@ TString CRTTeee      = "TMath::Abs(TMll - 91.1876)> 5. && TNTightLeps == 3 && TL
 TString CRtop      = "TIsCRtop == 1 && TNTightLeps == 3";
 TString CRZZ      = "TIsCRZZ == 1 && TNTightLeps == 4";
 TString CRConv      = "TIsCRConv == 1 && TNTightLeps == 3";
+
+
+// control variables for each cut
+TString CRVBS_0      = "TIsCRVBS_0 == 1 && TNTightLeps >= 3";
+TString CRVBS_1      = "TIsCRVBS_1 == 1 && TNTightLeps >= 3";
+TString CRVBS_2      = "TIsCRVBS_2 == 1 && TNTightLeps >= 3";
+TString CRVBS_3      = "TIsCRVBS_3 == 1 && TNTightLeps >= 3";
+TString CRVBS_4      = "TIsCRVBS_4 == 1 && TNTightLeps >= 3";
+TString CRVBS_5      = "TIsCRVBS_5 == 1 && TNTightLeps >= 3";
+TString CRVBS_6      = "TIsCRVBS_6 == 1 && TNTightLeps >= 3";
+TString CRVBS_7      = "TIsCRVBS_7 == 1 && TNTightLeps >= 3";
+TString CRVBS_8      = "TIsCRVBS_8 == 1 && TNTightLeps >= 3";
+TString CRVBS_9      = "TIsCRVBS_9 == 1 && TNTightLeps >= 3";
+TString CRVBS_10      = "TIsCRVBS_10 == 1 && TNTightLeps >= 3";
+TString CRVBS_11      = "TIsCRVBS_11 == 1 && TNTightLeps >= 3 && TMinMll > 10";
+TString CRVBS_12      = "TIsCRVBS_12 == 1 && TNTightLeps >= 3";
+TString CRVBS_13      = "TIsCRVBS_13 == 1 && TNTightLeps >= 3";
+
+
 
 TString newCRDY      = "TIsNewCRDY == 1 && TNTightLeps == 3";
 TString newCRTT      = "TIsNewCRTT == 1 && TNTightLeps == 3";
@@ -73,6 +91,22 @@ void DrawPlots(TString cutName, TString treeName = ""){
   TString cut;
   if     (cutName == "SR" ){ cut = SR ; yMax = 600; yMin = 1;}
   else if(cutName == "SRVBS" ){ cut = SRVBS ; yMax = 600; yMin = 1;}
+
+  else if(cutName == "CRVBS_0" ){ cut = CRVBS_0 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_1" ){ cut = CRVBS_1 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_2" ){ cut = CRVBS_2 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_3" ){ cut = CRVBS_3 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_4" ){ cut = CRVBS_4 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_5" ){ cut = CRVBS_5 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_6" ){ cut = CRVBS_6 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_7" ){ cut = CRVBS_7 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_8" ){ cut = CRVBS_8 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_9" ){ cut = CRVBS_9 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_10" ){ cut = CRVBS_10 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_11" ){ cut = CRVBS_11 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_12" ){ cut = CRVBS_12 ; yMax = 600; yMin = 1;}
+  else if(cutName == "CRVBS_13" ){ cut = CRVBS_13 ; yMax = 600; yMin = 1;}
+
   else if(cutName == "CRtop" ){ cut = CRtop ; yMax = 600; yMin = 1;}
   else if(cutName == "CRZZ" ){ cut = CRZZ ; yMax = 600; yMin = 1;}
   else if(cutName == "CRConv" ){ cut = CRConv ; yMax = 600; yMin = 1;}
@@ -183,18 +217,59 @@ void DrawPlots(TString cutName, TString treeName = ""){
 
   if (cutName == "SRVBS")
   {
-    DrawPlot("TMET",  cut, "All", 9, 20, 300, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos);
-    DrawPlot("TM3l",  cut, "All", 8, 50, 700, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos);
-    DrawPlot("TMtWZ",  cut, "All", 13, 0, 150, "M_{WZ} [GeV]", cutName, defaultLegPos);
-    DrawPlot("TMtW",  cut, "All", 10 , 40 , 800 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
-    DrawPlot("TMll",  cut, "All", 9, 70 , 110 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin, defaultLegPos);
-    DrawPlot("TLep_PtZ1",  cut, "All", 10,0 , 500 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1", cutName, outputDirName, yMax, yMin, defaultLegPos); 
-    DrawPlot("TLep_PtZ2",  cut, "All", 9,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin, defaultLegPos);
-    DrawPlot("TLep_PtW",  cut, "All", 9,0 , 300 , "p_{T}^{lepW} [GeV]", "TLep_PtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
-    DrawPlot("TLep_EtaZ1",  cut, "All", 7,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin, "UURR");
-    DrawPlot("TLep_EtaZ2",  cut, "All", 8,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin, "UURR");
-    DrawPlot("TLep_EtaW",  cut, "All", 8 ,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin, "UURR"); 
+    DrawPlot("TMET",  cut, "All", 9, 20, 300, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
+    //DrawPlot("TM3l",  cut, "All", 8, 50, 700, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
+    //DrawPlot("TMtWZ",  cut, "All", 13, 0, 150, "M_{WZ} [GeV]", cutName, defaultLegPos);
+    //DrawPlot("TMtW",  cut, "All", 10 , 40 , 800 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
+    //DrawPlot("TMll",  cut, "All", 9, 70 , 110 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin, defaultLegPos);
+    //DrawPlot("TLep_PtZ1",  cut, "All", 10,0 , 500 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1", cutName, outputDirName, yMax, yMin, defaultLegPos); 
+    //DrawPlot("TLep_PtZ2",  cut, "All", 9,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin, defaultLegPos);
+    //DrawPlot("TLep_PtW",  cut, "All", 9,0 , 300 , "p_{T}^{lepW} [GeV]", "TLep_PtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
+    //DrawPlot("TLep_EtaZ1",  cut, "All", 7,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin, "UURR");
+    //DrawPlot("TLep_EtaZ2",  cut, "All", 8,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin, "UURR");
+    //DrawPlot("TLep_EtaW",  cut, "All", 8 ,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin, "UURR"); 
   }
+
+  if (cutName == "CRVBS_0" || cutName == "CRVBS_1" || cutName == "CRVBS_2" || cutName == "CRVBS_3" ||
+      cutName == "CRVBS_4" || cutName == "CRVBS_5" || cutName == "CRVBS_6" || cutName == "CRVBS_7" ||
+      cutName == "CRVBS_8" || cutName == "CRVBS_9" || cutName == "CRVBS_10" || cutName == "CRVBS_11" ||
+      cutName == "CRVBS_12" || cutName == "CRVBS_13")
+  {
+    int mult = 999;
+
+    if (cutName == "CRVBS_13") {mult = 100;}
+    if (cutName == "CRVBS_12") {mult = 100;}
+    if (cutName == "CRVBS_11") {mult = 80;}
+    if (cutName == "CRVBS_10") {mult = 70;}
+    if (cutName == "CRVBS_9") {mult = 60;}
+    if (cutName == "CRVBS_8") {mult = 60;}
+    if (cutName == "CRVBS_7") {mult = 60;}
+    if (cutName == "CRVBS_4") {mult = 60;}
+    
+    DrawPlot("finalVar",  cut, "All", 20, -2, 6, "tests", "finalVar", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("goodDiJetMList",  cut, "All", 20, 0, 10, "tests", "DiJets con buena M inv", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("goodDiJetDeltaEtaList",  cut, "All", 20, -10, 10, "tests", "DiJets bien separados", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("badBJets",  cut, "All", 20, -1, 10, "tests", "badBJets", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("numGoodJets",  cut, "All", 10, 0, 10, "tests", "numGoodJets", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("passMandEtaRequieriments",  cut, "All", 13, -1, 2, "tests", "pasa req en M y eta", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("passEtaFilters",  cut, "All", 20, -1, 2, "tests", "passEtaFilters", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("MllnomMZ",  cut, "All", 20, -10, 30, "tests", "Mll - nomMZ", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TJet_Pt",  cut, "All", 40, 30, 300, "tests", "TJet_Pt", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TJet_Eta",  cut, "All", 20, -5, 5, "tests", "TJet_Eta", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+
+    DrawPlot("TMET",  cut, "All", 9, 20, 300, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TM3l",  cut, "All", 15, 50, 700, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TMinMll",  cut, "All", 150, 0, 150, "TMinMll [GeV]", "TMinMll", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TMtWZ",  cut, "All", 13, 0, 150, "M_{WZ} [GeV]", "TMtWZ", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TMtW",  cut, "All", 10 , 40 , 800 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TMll",  cut, "All", 9, 70 , 110 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TLep_PtZ1",  cut, "All", 10,0 , 500 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1", cutName, outputDirName, yMax, yMin, defaultLegPos, mult); 
+    DrawPlot("TLep_PtZ2",  cut, "All", 9,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TLep_PtW",  cut, "All", 9,0 , 300 , "p_{T}^{lepW} [GeV]", "TLep_PtW", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    DrawPlot("TLep_EtaZ1",  cut, "All", 7,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin, "UURR", mult);
+    DrawPlot("TLep_EtaZ2",  cut, "All", 8,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin, "UURR", mult);
+    DrawPlot("TLep_EtaW",  cut, "All", 8 ,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin, "UURR", mult); 
+  }  
 
   if (cutName == "CRZZ")
   {
@@ -216,15 +291,15 @@ void DrawPlots(TString cutName, TString treeName = ""){
   {
     DrawPlot("TMET",  cut, "All", 10, 0, 35, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos);
     DrawPlot("TM3l",  cut, "All", 10, 50,110, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos);
-    //DrawPlot("TMtWZ",  cut, "All", 10, 0, 150, "M_{WZ} [GeV]", cutName, defaultLegPos);
-    //DrawPlot("TMtW",  cut, "All", 10 , 0 , 400 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
-    //DrawPlot("TMll",  cut, "All",10, 0 , 85 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin, defaultLegPos);
-    //DrawPlot("TLep_PtZ1",  cut, "All", 10,0 , 140 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1", cutName, outputDirName, yMax, yMin, defaultLegPos); 
-    //DrawPlot("TLep_PtZ2",  cut, "All", 10,0 , 80 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin, defaultLegPos);
-    //DrawPlot("TLep_PtW",  cut, "All", 10,0 , 100 , "p_{T}^{lepW} [GeV]", "TLep_PtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
-    //DrawPlot("TLep_EtaZ1",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin, "UURR");
-    //DrawPlot("TLep_EtaZ2",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin, "UURR");
-    //DrawPlot("TLep_EtaW",  cut, "All", 10 ,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin, "UURR");  
+    DrawPlot("TMtWZ",  cut, "All", 10, 0, 150, "M_{WZ} [GeV]", cutName, defaultLegPos);
+    DrawPlot("TMtW",  cut, "All", 10 , 0 , 400 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
+    DrawPlot("TMll",  cut, "All",10, 0 , 85 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin, defaultLegPos);
+    DrawPlot("TLep_PtZ1",  cut, "All", 10,0 , 140 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1", cutName, outputDirName, yMax, yMin, defaultLegPos); 
+    DrawPlot("TLep_PtZ2",  cut, "All", 10,0 , 80 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin, defaultLegPos);
+    DrawPlot("TLep_PtW",  cut, "All", 10,0 , 100 , "p_{T}^{lepW} [GeV]", "TLep_PtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
+    DrawPlot("TLep_EtaZ1",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin, "UURR");
+    DrawPlot("TLep_EtaZ2",  cut, "All", 10,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin, "UURR");
+    DrawPlot("TLep_EtaW",  cut, "All", 10 ,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin, "UURR");  
   }
 
   if (cutName == "CRtop")
@@ -251,10 +326,10 @@ void DrawPlots(TString cutName, TString treeName = ""){
 
 
 
-void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0, \
-Float_t binN, TString Xtitle, TString varName, TString cutName, \
-TString outFolder, Float_t yMax, Float_t yMin, TString legPos){
-  std::cout << "hello!_2" << std::endl;
+void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0, 
+            Float_t binN, TString Xtitle, TString varName, TString cutName, 
+            TString outFolder, Float_t yMax, Float_t yMin, TString legPos, 
+            float scale){
   
   gSystem->Exec("cp /nfs/fanae/user/carlosec/www/index.php " + outFolder);
   //gSystem->Exec("cp /nfs/fanae/user/gonzalezm/www/SR/index.php " + outFolder);
@@ -299,6 +374,8 @@ TString outFolder, Float_t yMax, Float_t yMin, TString legPos){
     std::cout << "very Tight!" << std::endl;
     p->SetCut(cut);
 
+    p->scale = scale;
+
     p->SetLegendPosition(legPos);
     //--------------------------------------------------------------------------
     // MONTE CARLOS
@@ -321,26 +398,143 @@ TString outFolder, Float_t yMax, Float_t yMin, TString legPos){
 
 
     cout << cutName << endl;
-    if (cutName == "SRVBS") 
+    if (cutName == "SRVBS" || (std::string(cutName).rfind("CRVBS", 0) == 0)) 
     {
-      p->AddSample("WZ_EWK_M60", "VBS",  itSignal, kRed-7);
+      //p->AddSample("WZ_EWK_M60", "VBS",  itSignal, kRed-7);
+      p->SetWeight("TWeight*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSignal, kRed-7);
+      p->SetWeight("TWeight*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSignal, kRed-7);
+      p->SetWeight("TWeight");
       p->AddSample("WZTo3LNu", "WZ",  itBkg, kOrange);
+
+      /*
+      // PUSF ==================================================================
+      p->SetWeight("TWeight_PUSF_Up");
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Up");
+      p->SetWeight("TWeight_PUSF_Up*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1, "PUSF_Up");
+      p->SetWeight("TWeight_PUSF_Up*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1, "PUSF_Up");
+      
+      p->SetWeight("TWeight_PUSF_Down");
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Down");
+      p->SetWeight("TWeight_PUSF_Down*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1, "PUSF_Down");
+      p->SetWeight("TWeight_PUSF_Down*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1, "PUSF_Down");
+
+      // ElecSF ================================================================
+      p->SetWeight("TWeight_ElecSFUp");
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "ElecSFUp");
+      p->SetWeight("TWeight_ElecSFUp*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1, "ElecSFUp");
+      p->SetWeight("TWeight_ElecSFUp*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1, "ElecSFUp");
+      
+      p->SetWeight("TWeight_ElecSFDown");
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "ElecSFDown");
+      p->SetWeight("TWeight_ElecSFDown*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1, "ElecSFDown");
+      p->SetWeight("TWeight_ElecSFDown*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1, "ElecSFDown");
+      p->SetWeight("TWeight");
+
+      // MuonSF ================================================================
+      p->SetWeight("TWeight_MuonSFUp");
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"MuonSFUp");
+      p->SetWeight("TWeight_MuonSFUp*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"MuonSFUp");
+      p->SetWeight("TWeight_MuonSFUp*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"MuonSFUp");
+      
+      p->SetWeight("TWeight_MuonSFDown");
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "MuonSFDown");
+      p->SetWeight("TWeight_MuonSFDown*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"MuonSFDown");
+      p->SetWeight("TWeight_MuonSFDown*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"MuonSFDown");
+      p->SetWeight("TWeight");
+      
     }  
     else 
     {
       cout << "WZ will be the signal" << endl;
       p->AddSample("WZTo3LNu", "WZ",  itSignal, kOrange);
+
+      // weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      p->SetWeight("TWeight_PUSF_Up"); 
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Up");
+      p->SetWeight("TWeight_PUSF_Down");
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Down");
+
+      p->SetWeight("TWeight_ElecSFUp"); 
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "ElecSFUp");
+      p->SetWeight("TWeight_ElecSFDown");
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "ElecSFDown");
+
+      p->SetWeight("TWeight_MuonSFUp"); 
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "MuonSFUp");
+      p->SetWeight("TWeight_MuonSFDown");
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "MuonSFDown");
+      */
+      p->SetWeight("TWeight"); 
     }  
 
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itBkg, kGreen-5); // RareSM
-    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    //p->AddSample("tZW_ll",    "tZX",  itBkg, kGreen); // RareSM 
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itBkg, kAzure+10); // RareSM 
+
+
+    // weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    /*
+    // PUSF ====================================================================
+    p->SetWeight("TWeight_PUSF_Up"); 
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "PUSF_Up"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "PUSF_Up"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "PUSF_Up"); // RareSM 
+
+    p->SetWeight("TWeight_PUSF_Down");
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "PUSF_Down"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "PUSF_Down"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "PUSF_Down"); // RareSM 
+
+    // ElecSF ==================================================================
+    p->SetWeight("TWeight_ElecSFUp"); 
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "ElecSFUp"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "ElecSFUp"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "ElecSFUp"); // RareSM 
+
+    p->SetWeight("TWeight_ElecSFDown");
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "ElecSFDown"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "ElecSFDown"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "ElecSFDown"); // RareSM 
+
+    // MuonSF ==================================================================
+    p->SetWeight("TWeight_MuonSFUp"); 
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "MuonSFUp"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "MuonSFUp"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "MuonSFUp"); // RareSM 
+
+    p->SetWeight("TWeight_MuonSFDown");
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "MuonSFDown"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "MuonSFDown"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "MuonSFDown"); // RareSM 
+    p->SetWeight("TWeight"); 
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    */
 
 
     // DATOS
 
   	p->AddSample("dataRun2016BCDEFGH", "Data",  itData);             // Data
-
     p->SetCut(cut + " && TConvNumber == 0");
     cut.ReplaceAll("TNTightLeps", "TNFOLeps");
     p->SetCut(cut); //Data fakes, relax tight to FO
@@ -423,8 +617,15 @@ TString outFolder, Float_t yMax, Float_t yMin, TString legPos){
   //p->SetRatioOptions("");
   p->SetRatioMin(0.5);
   p->SetRatioMax(1.5);
-
-  //p->AddSystematic("stat");
+  //p->AddNormUnc("WZ", 0.06);
+  //p->AddNormUnc("non-Pr", 0.3);
+  //p->AddNormUnc("X+#gamma", 0.2);
+  //p->AddNormUnc("ttX", 0.15);
+  //p->AddNormUnc("tZq", 0.35);
+  //p->AddNormUnc("tZW", 0.35);
+  //p->AddNormUnc("VVV/VV", 0.5);
+  //p->AddNormUnc("ZZ", 0.07);
+  p->AddSystematic("stat"); //PUSF,ElecSF,MuonSF");
   cout << "Selection = " << varName << endl;
   cout << "Corresponding to cut: " << cut << endl;
   p->PrintYields();
@@ -433,7 +634,7 @@ TString outFolder, Float_t yMax, Float_t yMin, TString legPos){
   p->DrawStack("0");
   //p->doSetLogy = true;
   //p->DrawStack("log");
-  //p->PrintSystYields();
+  p->PrintSystYields();
   delete p;
   
 }
