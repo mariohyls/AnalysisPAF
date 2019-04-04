@@ -111,6 +111,17 @@ class WZAnalysis : public PAFChainItemSelector{
 
     //Variables
     Float_t TWeight;   // Total nominal weight
+
+    Float_t TWeight_PUSF_Up;
+    Float_t TWeight_PUSF_Down;
+
+    Float_t TWeight_ElecSFUp;
+    Float_t TWeight_ElecSFDown;
+
+    Float_t TWeight_MuonSFUp;
+    Float_t TWeight_MuonSFDown;
+
+
     Float_t TMll;      // Invariant mass of OSSF (best Z mass)
     Float_t TMZ1W;
     Float_t TMZ2W;
@@ -128,6 +139,31 @@ class WZAnalysis : public PAFChainItemSelector{
     // Event classification
     Bool_t  TIsSR;
     Bool_t  TIsSRVBS;
+
+
+    // Aux variables defined to study the cuts
+
+    Bool_t  TIsCRVBS_0, TIsCRVBS_1, TIsCRVBS_2, TIsCRVBS_3, TIsCRVBS_4, TIsCRVBS_5;
+    Bool_t  TIsCRVBS_6, TIsCRVBS_7, TIsCRVBS_8, TIsCRVBS_9, TIsCRVBS_10;
+    Bool_t  TIsCRVBS_11, TIsCRVBS_12, TIsCRVBS_13;
+    
+    Float_t finalVar = -999;
+    Float_t MllnomMZ = -999;
+    Bool_t badBJets = false;
+    Int_t numGoodJets = 0;
+
+    std::vector<Float_t> goodDiJetM = {};                  
+    std::vector<Float_t> goodDiJetDeltaEta = {};
+
+    Int_t lenM = 0;
+    Int_t lenEta = 0;
+
+    int goodDiJetMSize = 0;
+    int goodDiJetDeltaEtaSize = 0;
+    
+
+
+
     Bool_t  passMandEtaRequieriments;
     Bool_t  passEtaFilters;
 
