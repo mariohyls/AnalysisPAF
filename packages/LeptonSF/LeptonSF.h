@@ -72,7 +72,7 @@ class LeptonSF {
   TH2D*  fMuonEWKinoID;
   TH2D*  fMuonEWKinomvaM;
   TH2D*  fMuonEWKinomvaVT;
-
+  TH2D*  fMuonEWKinomvaVT_Unc;
   // Elec SFs
   TH2D*  fElecTrackerSF;
   TH2D*  fElecIdSF;
