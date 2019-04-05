@@ -25,7 +25,7 @@ LeptonSF::LeptonSF(TString path, TString options):
   fMuonEWKinoID(0),
   fMuonEWKinomvaM(0),
   fMuonEWKinomvaVT(0),
-
+  fMuonEWKinomvaVT_Unc(0),
 
   fElecTrackerSF(0),  // Electron Reco
   fElecIdSF(0),       // Electron Id (+Iso)
@@ -177,7 +177,8 @@ void LeptonSF::loadHisto(Int_t iHisto, Int_t wp){
   }
   else if(iHisto == iMuonEWKinomvaVT){
     filename = "muonSF_mvaVT_EWKino_fullsim_M17_36p5fb"; histoname = "SF";
-    fMuonEWKinomvaVT    = GetHistogramFromFileD(path_to_SF_histos + filename + ".root", histoname, "fMuonEWKinomvaVT");
+    fMuonEWKinomvaVT        = GetHistogramFromFileD(path_to_SF_histos + filename + ".root", histoname, "fMuonEWKinomvaVT");
+    fMuonEWKinomvaVT_Unc    = GetHistogramFromFileD(path_to_SF_histos +  "muonUncWZ.root", histoname, "fMuonEWKinomvaVT_Unc");
   }
 
 
@@ -371,6 +372,7 @@ Float_t LeptonSF::GetLeptonSFerror(Float_t pt, Float_t ieta, Int_t type){
       else if(id == iMuonLooseTracksttH)  err += p2(fMuonLooseTracksttH   ->GetBinError(fMuonLooseTracksttH ->FindBin(pt,eta)));
       else if(id == iMuonLooseMiniIsottH) err += p2(fMuonLooseMiniIsottH  ->GetBinError(fMuonLooseMiniIsottH->FindBin(pt,eta)));
       else if(id == iMuonTightIP2DttH)    err += p2(fMuonTightIP2DttH     ->GetBinError(fMuonTightIP2DttH   ->FindBin(pt,eta)));
+      else if(id == iMuonEWKinomvaVT)     err += p2(fMuonEWKinomvaVT_Unc  ->GetBinError(fMuonEWKinomvaVT_Unc->FindBin(pt,eta)));
     }
     else if(type == 1){ 
       if(pt > 200) pt = 199;
@@ -381,13 +383,14 @@ Float_t LeptonSF::GetLeptonSFerror(Float_t pt, Float_t ieta, Int_t type){
       else if(id == iElecId)      err += p2(fElecIdSF      ->GetBinError(fElecIdSF     ->FindBin(eta,pt)));
       else if(id == iElecIP2D)    err += p2(fElecIP2DSF    ->GetBinError(fElecIP2DSF   ->FindBin(eta,pt)));
       else if(id == iElecSIP3D)   err += p2(fElecSIP3DSF   ->GetBinError(fElecSIP3DSF  ->FindBin(eta,pt)));
-      else if(id == iElecIsoFastSimStop)   err += p2(fElecIsoFastSimStop ->GetBinError(fElecIsoFastSimStop  ->FindBin(pt, eta)));
-      else if(id == iElecIdFastSimStop)   err += p2(fElecIdFastSimStop ->GetBinError(fElecIdFastSimStop  ->FindBin(pt, eta)));
+      else if(id == iElecIsoFastSimStop)  err += p2(fElecIsoFastSimStop   ->GetBinError(fElecIsoFastSimStop ->FindBin(pt,eta)));
+      else if(id == iElecIdFastSimStop)   err += p2(fElecIdFastSimStop    ->GetBinError(fElecIdFastSimStop  ->FindBin(pt,eta)));
       else if(id == iEleclepMVA2lSSttH)   err += p2(fEleclepMVA2lSSttH    ->GetBinError(fEleclepMVA2lSSttH  ->FindBin(pt,eta)));
       else if(id == iEleclepMVA3l4lttH)   err += p2(fEleclepMVA3l4lttH    ->GetBinError(fEleclepMVA3l4lttH  ->FindBin(pt,eta)));
       else if(id == iElecTightIP2DM17ttH) err += p2(fElecTightIP2DM17ttH  ->GetBinError(fElecTightIP2DM17ttH->FindBin(pt,eta)));
       else if(id == iElecMini4M17ttH)     err += p2(fElecMini4M17ttH      ->GetBinError(fElecMini4M17ttH    ->FindBin(pt,eta)));
       else if(id == iElecConvVetoM17ttH)  err += p2(fElecConvVetoM17ttH   ->GetBinError(fElecConvVetoM17ttH ->FindBin(pt,eta)));
+      else if(id == iElecEWKinomvaVT)     err += p2(fElecEWKinomvaVT      ->GetBinError(fElecEWKinomvaVT    ->FindBin(pt,eta)));
     }
   }
   return TMath::Sqrt(err);
