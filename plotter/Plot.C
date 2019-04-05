@@ -720,7 +720,7 @@ TLegend* Plot::SetLegend(){ // To be executed before using the legend
     if(SignalStyle == "CrossSection" || SignalStyle == "xsec" || SignalStyle == "Bkg" || SignalStyle == "Fill"){
       for(Int_t i = 0; i < nSignals; i++){
       //  if(VSignals.at(i)->GetProcess() == SignalProcess){
-          VSignals.at(i)->SetLineWidth(2);
+          VSignals.at(i)->SetLineWidth(1);
           VSignals.at(i)->SetFillColor(VSignals.at(i)->GetColor());
           VSignals.at(i)->AddToLegend(leg, doYieldsInLeg);  
       //  }
@@ -729,7 +729,7 @@ TLegend* Plot::SetLegend(){ // To be executed before using the legend
     else if((SignalStyle == "SM" || SignalStyle == "H")){ 
       for(Int_t i = 0; i < nSignals; i++){
        // if(VSignals.at(i)->GetProcess() == SignalProcess){
-          VSignals.at(i)->SetLineWidth(2);
+          VSignals.at(i)->SetLineWidth(1);
           VSignals.at(i)->SetFillColor(VSignals.at(i)->GetColor());
           VSignals.at(i)->AddToLegend(leg, doYieldsInLeg);  
        // }
@@ -850,7 +850,7 @@ void Plot::DrawComp(TString tag, bool doNorm, TString options){
   if(sD == "") sD = drawstyle;
   signal->SetDrawStyle(sD);
   signal->SetTitle("");
-  signal->SetLineWidth(3);
+  signal->SetLineWidth(1);
   signal->SetMarkerStyle(24); signal->SetMarkerSize(1.8);
   signal->GetXaxis()->SetLabelSize(0.0);
   signal->Draw(signal->GetDrawStyle());
@@ -930,7 +930,6 @@ void Plot::DrawComp(TString tag, bool doNorm, TString options){
   vector<TH1F*> ratios;
   TH1F* htemp = NULL;
   hratio = (TH1F*)VSignals.at(0)->Clone("hratio_sig");
-  std::cout << "Helloooooooooooooooooooo!" << std::endl;
   SetHRatio();
   if(options.Contains("ratiocolor")){
     for(Int_t  i = 1; i < nsamples; i++){
@@ -997,7 +996,7 @@ void Plot::DrawStack(TString tag){
   TCanvas* c = SetCanvas(); plot->cd(); 
   GetStack();
   SetData();
-  if(dataStyle.Contains("l")  || dataStyle.Contains("L") || dataStyle.Contains("hist")){ hData->SetLineWidth(2); hData->SetLineColor(1);}
+  if(dataStyle.Contains("l")  || dataStyle.Contains("L") || dataStyle.Contains("hist")){ hData->SetLineWidth(1); hData->SetLineColor(1);}
 
   //--------- Plotting options for the signal
   Int_t nSignals = 0;
@@ -1013,13 +1012,13 @@ void Plot::DrawStack(TString tag){
         hStack->Add(hSignal);
         hSignal->SetFillColor(0);
         hSignal->SetLineColor(hSignal->GetColor());
-        hSignal->SetLineWidth(2);
+        hSignal->SetLineWidth(1);
         hSignal->Add( (TH1F*)  ((TH1F*) hStack->GetStack()->Last()) -> Clone("StackForSignal_"+hSignal->GetProcess()) );
         VSignalsStack.push_back(hSignal);
       }
     }
     else if(SignalStyle == "CrossSection" || SignalStyle == "xsec" || SignalStyle == "Bkg" || SignalStyle == "Fill"){
-      hSignal->SetLineWidth(3);
+      hSignal->SetLineWidth(1);
       hSignal->SetLineColor(hSignal->GetColor());
       hSignal->SetFillColor(hSignal->GetColor());
       hStack->Add(hSignal);
@@ -1033,6 +1032,13 @@ void Plot::DrawStack(TString tag){
   }*/
   hStack->Draw("hist");
   cout << ">>>>>>>>>>>>>>>> NUMBER OF SIGNALS: " << VSignalsStack.size() << endl;
+
+
+
+
+
+
+
   //for(int i = 0; i < (int) VSignalsStack.size(); i++) VSignalsStack.at(i)->Draw("hist,same");
 /*  if((SignalStyle == "SM" || SignalStyle == "H")){ 
     Histo* AddMe = hAllBkg->CloneHisto("AddMeToLegend");
@@ -1071,17 +1077,27 @@ void Plot::DrawStack(TString tag){
 
 
   //--------- Draw signal
-  if(doSignal && (SignalStyle == "scan" || SignalStyle == "BSM" || SignalStyle == "") )
-    for(Int_t  i = 0; i < nSignals; i++) VSignals.at(i)->Draw(SignalDrawStyle + "same");
+  if(doSignal && (SignalStyle == "scan" || SignalStyle == "BSM" || SignalStyle == ""))
+    {
+      std::cout << "I'm here now xd lollll!!!!" << std::endl;
+      for(Int_t  i = 0; i < nSignals; i++) VSignals.at(i)->Draw(SignalDrawStyle + "same");
+    }
+
+  
 
   //---------  Draw systematic errors
   //if(doSignal && (SignalStyle == "scan" || SignalStyle == "BSM" || SignalStyle == "") )
   hAllBkg->SetFillStyle(3444); // 3444 o 3004 (3145 default here)
   hAllBkg->SetFillColor(StackErrorColor); // kGray+2 as default
   hAllBkg->SetLineColor(StackErrorColor);
-  hAllBkg->SetLineWidth(0);
+  hAllBkg->SetLineWidth(1);
   hAllBkg->SetMarkerSize(0);
-  if(doSys && ((Int_t) VSystLabel.size() > 0 || doExternalSyst))  hAllBkg->Draw("same,e2");
+  //if(doSys && ((Int_t) VSystLabel.size() > 0 || doExternalSyst))  hAllBkg->Draw("same,e2");
+  if(doSys && ((Int_t) VSystLabel.size() > 0 || doExternalSyst))  hAllBkg->Draw("same");
+  TH1F* hAuxForErr =  (TH1F*) hAllBkg->Clone("hAuxForErr");
+  hAuxForErr->Add(hSignal);
+  if(doSys && ((Int_t) VSystLabel.size() > 0 || doExternalSyst))  hAuxForErr->Draw("same,e2");
+  std::cout << "I'm here now xd!!!!" << std::endl;
 
   //--------- Draw Data
   if(doData && RatioYtitle != "S/B") hData->Draw(dataStyle);
@@ -1097,10 +1113,11 @@ void Plot::DrawStack(TString tag){
     hratioerr->SetBinContent(bin, 1);
     hratioerr->SetBinError(bin, errbin);
   }
+
   hratioerr->SetFillColor(RatioErrorColor); 
   hratioerr->SetFillStyle(RatioErrorStyle); 
   hratioerr->SetMarkerSize(0);
-
+  
   //--------- Set legend and other texts
   TLegend* leg = SetLegend();
 //   if (doUncInLegend) leg->AddEntry(hAllBkg, "Uncertainty", "f");
@@ -1112,6 +1129,28 @@ void Plot::DrawStack(TString tag){
     SetTexChan();
     texchan->Draw("same");
   }
+
+
+  //delete me soon, please
+  if (doSignal && scale != 999)
+  {
+    //TH1F* hScaled;
+    //hScaled = hSignal;
+    TH1F *hScaled = (TH1F*) hSignal->Clone();
+    //std::cout << hScaled->GetNbinsX() << std::endl;
+    //hScaled->Add(hSignal, 6);
+    hScaled->Scale(scale);
+    hScaled->SetFillStyle(3244);
+    hScaled->SetLineColor(kBlack);
+    hScaled->SetFillColor(kBlack);
+    TString label = TString("SR * ") + (TString)std::to_string(scale);
+    leg->AddEntry(hScaled, label , "l"); 
+    hScaled->Draw("same, hist");
+  }
+  
+
+
+
 
   //---------- Set ratio... with Data, S/B, etc
   pratio->cd();
@@ -1148,7 +1187,7 @@ void Plot::DrawStack(TString tag){
     if(doData) hratio = (TH1F*)hData->Clone("hratio");
     else       hratio = (TH1F*)hAllBkg->Clone("hratio");
     // ratio by hand so systematic (background) errors don't get summed up to statistical ones (data)
-    for (int bin = 0; bin < hratio->GetNbinsX(); ++bin){
+    for (int bin = 0; bin < hratio->GetNbinsX() ; ++bin){
       if (hratio->GetBinContent(bin+1) > 0){ 
         hratio->SetBinContent( bin+1, hratio->GetBinContent(bin+1) / (hAllBkg->GetBinContent(bin+1) + hSignal->GetBinContent(bin+1)));
         hratio->SetBinError  ( bin+1, hratio->GetBinError  (bin+1) / (hAllBkg->GetBinContent(bin+1) + hSignal->GetBinContent(bin+1)));
@@ -1174,7 +1213,7 @@ void Plot::DrawStack(TString tag){
     //}
   }
   SetHRatio(hratio);
-  //if(!RatioYtitle.Contains("S")) hratio->SetLineWidth(0); 
+  //if(!RatioYtitle.Contains("S")) hratio->SetLineWidth(1); 
   hratio->Draw("same");
 
   cout << "Drawing hline...\n";
@@ -1196,6 +1235,7 @@ void Plot::DrawStack(TString tag){
     c->Print( dir + plotname + ".pdf", "pdf");
     c->Print( dir + plotname + ".png", "png");
     c->Print( dir + plotname + ".eps", "eps");
+    c->Print( dir + plotname + ".txt", "txt");
     c->SaveAs( dir + plotname + ".root");
   //delete c;
   //if(leg) delete leg; if(hratioerr) delete hratioerr; if(hline) delete hline;
@@ -1296,6 +1336,7 @@ void Plot::SaveHistograms(){
         statup  ->Write(); statdown->Write();
       }
     }
+
   }
   for(int i = 0; i < (Int_t) VSyst.size(); i++){
     nom = VSyst.at(i);

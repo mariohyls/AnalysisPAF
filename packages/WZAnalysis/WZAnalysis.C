@@ -81,12 +81,12 @@ void WZAnalysis::InsideLoop(){
   passTrigger    = GetParam<Bool_t>("passTrigger");
   TEvtNum        = Get<ULong64_t>("evt");
 
-  std::cout << "test 0 " << std::endl;
+  //std::cout << "test 0 " << std::endl;
 
 
 
 
-  std::cout << "evtNum: " << TEvtNum << std::endl;
+  //std::cout << "evtNum: " << TEvtNum << std::endl;
 
 
 
@@ -113,12 +113,12 @@ void WZAnalysis::InsideLoop(){
     //std::cout << "Match gen/reco\n";
     //fakeableLeptons = getMatchGenSelLeptons(fakeableLeptons, genLeptons, 0.3, true); // Match gen and sel Leptons, require same Id
     //fakeableLeptons = getMatchGenSelLeptons(fakeableLeptons, genParticles, 0.3, false); // Match gen particles and sel Leptons, do not require same Id (allow for taus)
-    std::cout << "test 1 " << std::endl;
+    //std::cout << "test 1 " << std::endl;
 
 
 
 
-    std::cout << TNOSSF<< " " << passTrigger<< " "<< passMETfilters<< " "<< std::endl;
+    //std::cout << TNOSSF<< " " << passTrigger<< " "<< passMETfilters<< " "<< std::endl;
 
 
 
@@ -128,7 +128,7 @@ void WZAnalysis::InsideLoop(){
     if((TNFOLeps >= 3) && TNOSSF > 0  && passTrigger && passMETfilters){ 
     //if(TNFOLeps < 3 && TNOSSF > 0  && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
 
-    std::cout << "test 2 " << std::endl;
+    //std::cout << "test 2 " << std::endl;
 
     // Deal with weights:
     //std::cout << "Pass 3FO\n";
@@ -158,8 +158,8 @@ void WZAnalysis::InsideLoop(){
           if (fakeableLeptons.at(i).isMuon){
             MuonSF   *= fakeableLeptons.at(i).GetSF( 0);
             MuonSFUp *= fakeableLeptons.at(i).GetSF( 1);
-            MuonSFDo *= fakeableLeptons.at(i).GetSF(-1);        
-          }
+            MuonSFDo *= fakeableLeptons.at(i).GetSF(-1);
+          } 
           else{
             ElecSF   *= fakeableLeptons.at(i).GetSF( 0);
             ElecSFUp *= fakeableLeptons.at(i).GetSF( 1);
@@ -169,6 +169,19 @@ void WZAnalysis::InsideLoop(){
       }
   
       TWeight = NormWeight*ElecSF*MuonSF*TrigSF*PUSF;
+
+      TWeight_PUSF_Up = NormWeight*ElecSF*MuonSF*TrigSF*PUSF_Up;
+      TWeight_PUSF_Down = NormWeight*ElecSF*MuonSF*TrigSF*PUSF_Down;
+
+      TWeight_ElecSFUp = NormWeight*ElecSFUp*MuonSF*TrigSF*PUSF;
+      TWeight_ElecSFDown = NormWeight*ElecSFDo*MuonSF*TrigSF*PUSF;
+
+      TWeight_MuonSFUp = NormWeight*ElecSF*MuonSFUp*TrigSF*PUSF;
+      TWeight_MuonSFDown = NormWeight*ElecSF*MuonSFDo*TrigSF*PUSF;
+
+
+
+
       TIsSR   = false;
       TIsSRVBS = false;
       passMandEtaRequieriments = false;
@@ -176,13 +189,32 @@ void WZAnalysis::InsideLoop(){
       TIsCRDY = false;
       TIsCRTT = false;  
 
+      // one region for each cut
+      TIsCRVBS_0 = false; TIsCRVBS_1 = false, TIsCRVBS_2 = false;
+      TIsCRVBS_3 = false; TIsCRVBS_4 = false, TIsCRVBS_5 = false;
+      TIsCRVBS_6 = false; TIsCRVBS_7 = false, TIsCRVBS_8 = false;
+      TIsCRVBS_9 = false; TIsCRVBS_10 = false, TIsCRVBS_11 = false;
+      TIsCRVBS_12 = false; TIsCRVBS_13 = false;
+
+
+
+
       TIsCRtop = false;  
       TIsCRConv = false;
       TIsCRZZ = false;
 
       TIsNewCRDY = false;
       TIsNewCRTT = false;  
-      if(gIsData) TWeight = 1;
+      if(gIsData)
+      {
+        TWeight = 1;
+        TWeight_PUSF_Up = 1;
+        TWeight_PUSF_Down = 1;
+        TWeight_ElecSFUp = 1;
+        TWeight_ElecSFDown = 1;
+        TWeight_MuonSFUp = 1;
+        TWeight_MuonSFDown = 1;
+      }
       // Event Selection
       // ===================================================================================================================
       TM3l  = -999;
@@ -191,7 +223,7 @@ void WZAnalysis::InsideLoop(){
       TMll  = -999;
       TMZ1W = -999;
       TMZ2W = -999;
-      std::cout << "ASSIGNS\n";
+      //std::cout << "ASSIGNS\n";
       std::vector<Lepton> tempLeps = AssignWZLeptons(fakeableLeptons);
       tempLeps = getMatchGenSelLeptons(tempLeps, tightLeptons, 0.4, true);
 
@@ -225,13 +257,13 @@ void WZAnalysis::InsideLoop(){
       TLep_IsTightW =  (lepW.lepMatch == 0) ? 0 : 1;
       TLep_pdgIdW = lepW.type;
 
-      std::cout << "REMATCHES\n";
+      //std::cout << "REMATCHES\n";
       TLep_IsPromptW = lepW.idDecayMode;
       TLep_IsPromptZ2 = lepZ2.idDecayMode;
       TLep_IsPromptZ1 = lepZ1.idDecayMode;
       
       
-      std::cout << "test 3 " << std::endl;
+      //std::cout << "test 3 " << std::endl;
 
 
       for(Int_t i = 0; i < TNFOLeps; i++){
@@ -249,9 +281,11 @@ void WZAnalysis::InsideLoop(){
 
 
       //WZ VBS region
+      // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       Bool_t tooManyLeps = false; // TODO: move me to the header
       if (TNFOLeps >= 3 && (passesMCTruth(fakeableLeptons,1,TNFOLeps)))
       {
+        TIsCRVBS_13 = true;
 
         // extra leps must have pt < 10 GeV
         for (int a = 3; a < TNFOLeps; a++)
@@ -261,24 +295,40 @@ void WZAnalysis::InsideLoop(){
             tooManyLeps = true;
           }
         }
-
+        
+        if (lepZ1.Pt() > 25 && lepZ2.Pt() > 15 && lepW.Pt() > 20) {
+          TIsCRVBS_11 = true;
+          }
+        if (tooManyLeps == false) {TIsCRVBS_12 = true;}
+        
 
         if (lepZ1.Pt() > 25 && lepZ2.Pt() > 15 && lepW.Pt() > 20 && tooManyLeps == false)
         {
-          if (TMath::Abs(TMll - nomZmass) < 15. && TMinMll > 4. && TM3l > 100.)
+          if (TMath::Abs(TMll - nomZmass) < 15.) {TIsCRVBS_8 = true;}
+          if (TMinMll > 4) {TIsCRVBS_9 = true;}
+          if (TM3l > 90.) {TIsCRVBS_10 = true;} //====
+
+          MllnomMZ = TMath::Abs(TMll - nomZmass);
+          if (TMath::Abs(TMll - nomZmass) < 15. && TMinMll > 4. && TM3l > 90.) // ====
           {
+            TIsCRVBS_7 = true;
             passEtaFilters = true;
             for (int a  = 0; a < TNFOLeps; a++)
             { 
-              if ((tempLeps.at(a).isMuon && tempLeps.at(a).Eta() >= 2.4) || 
-                  (tempLeps.at(a).isElec && tempLeps.at(a).Eta() >= 2.5))
+              if ((tempLeps.at(a).isMuon && abs(tempLeps.at(a).Eta()) >= 2.4) || 
+                  (tempLeps.at(a).isElec && abs(tempLeps.at(a).Eta()) >= 2.5))
                   {passEtaFilters = false; break;}
             }
 
+              if (TMET > 30) {TIsCRVBS_5 = true;}
+              if (passEtaFilters) {TIsCRVBS_6 = true;}
+
+
             if (passEtaFilters && TMET > 30)
             {
-              Bool_t badBJets = false; // B jets with pt > 30 & eta < 4.7 
-              Int_t numGoodJets = 0; // pt > 50 GeV y eta < 4.7, 2 MIN.
+              TIsCRVBS_4 = true;
+              badBJets = false; // B jets with pt > 30 & eta < 4.7 
+              numGoodJets = 0; // pt > 50 GeV y eta < 4.7, 2 MIN.
               std::vector <Int_t> indexes = {}; // where are the good jets
 
               for (int a = 0; a < TNJets; a++)
@@ -297,29 +347,46 @@ void WZAnalysis::InsideLoop(){
               
               passMandEtaRequieriments = false;
               //bool passMandEtaRequieriments = false; // mjj > 500 GeV, Deta > 2.5
+              
+              if (!badBJets) {TIsCRVBS_3 = true;}
+              if (numGoodJets >= 2) {TIsCRVBS_2 = true;}
+
               if (!badBJets && numGoodJets >= 2)
               {
+                TIsCRVBS_1 = true;
+
                 TLorentzVector jet1;
                 TLorentzVector jet2;
+
                 for (unsigned int r = 0; r < indexes.size(); r++)
                 {
                   for (unsigned int s = 0; s < indexes.size(); s++)
                   {
-                    jet1.SetPxPyPzE(TJet_Px[r], TJet_Py[r], TJet_Pz[r], TJet_E[r]);
-                    jet2.SetPxPyPzE(TJet_Px[s], TJet_Py[s], TJet_Pz[s], TJet_E[s]);
-
-                    if ((jet1 + jet2).M() > 500 && \
-                        abs(TJet_Eta[r] - TJet_Eta[s]) > 2.5)
+                    if (r != s)
                     {
-                      passMandEtaRequieriments = true; break;
+                      jet1.SetPxPyPzE(TJet_Px[r], TJet_Py[r], TJet_Pz[r], TJet_E[r]);
+                      jet2.SetPxPyPzE(TJet_Px[s], TJet_Py[s], TJet_Pz[s], TJet_E[s]);
+
+                      goodDiJetM.push_back((jet1 + jet2).M());
+                      goodDiJetDeltaEta.push_back(abs(TJet_Eta[r] - TJet_Eta[s]));
+                      if ((jet1 + jet2).M() > 500 && \
+                          abs(TJet_Eta[r] - TJet_Eta[s]) > 2.5)
+                      {
+                        passMandEtaRequieriments = true; break;
+                      }
                     }
                   }
                 }
 
                 if (passMandEtaRequieriments)
                 {
+                  TIsCRVBS_0 = true;
                   TLorentzVector sum3l = tempLeps.at(0).p + tempLeps.at(1).p + tempLeps.at(2).p;
-                  if (TMath::Abs(sum3l.Eta() - 0.5*(jet1.Eta() + jet2.Eta())) < 2.5)
+                  
+                  finalVar = TMath::Abs(sum3l.Eta() - 0.5*(jet1.Eta() + jet2.Eta()));
+
+                  //if (TMath::Abs(sum3l.Eta() - 0.5*(jet1.Eta() + jet2.Eta())) < 2.5) // =====
+                  if (TMath::Abs(sum3l.Eta() - 0.5*(jet1.Eta() + jet2.Eta())) < 4)
                   {
                     TIsSRVBS = true;
                   }
@@ -329,11 +396,17 @@ void WZAnalysis::InsideLoop(){
           }
         }
       }
+      goodDiJetMSize = goodDiJetM.size();
+      goodDiJetDeltaEtaSize = goodDiJetDeltaEta.size();
+ 
+
+
+      // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
       // Let's define here the CRZZ region
       if (TNFOLeps == 4 && passesMCTruth(fakeableLeptons,1,4))
       {
-        lepExtra = tempLeps.at(3);
+        lepExtra = tempLeps.at(3); 
         TLep_PtExtra = lepExtra.Pt();
 
         {
@@ -351,7 +424,7 @@ void WZAnalysis::InsideLoop(){
 
 
       if(passesMCTruth(fakeableLeptons,1,3) && TNFOLeps == 3){
-        std::cout << "test 4 " << std::endl;
+        //std::cout << "test 4 " << std::endl;
 
 
         // Let's define here the CRConv region
@@ -389,16 +462,16 @@ void WZAnalysis::InsideLoop(){
 
         //std::cout << "Pass 3Tight, hasOS,passMC\n";
         if (lepZ1.Pt() > 25 && lepZ2.Pt() > 10 && lepW.Pt() > 25){//3 lepton, has OSSF, leptons assigned to W and Z. Fill histos from here onwards
-          std::cout << "test 5 " << std::endl;
+          //std::cout << "test 5 " << std::endl;
 
           if(TMath::Abs(TMll - nomZmass)< 15. && TMinMll > 4. && TM3l > 100.  ){ //  Z window + exlcude low masses + M_3l selection 
-            std::cout << "test ------6 " << std::endl;
+            //std::cout << "test ------6 " << std::endl;
 
             // The last two cuts define the Control/Signal regions
             
             // Signal Region
             if(TMET > 30.){   // MET > 30 always
-              std::cout << "test -------7 " << std::endl;
+              //std::cout << "test -------7 " << std::endl;
 
               if(TNBtags == 0){ //Exactly 0 btags
                 TIsSR   = true;
@@ -420,7 +493,7 @@ void WZAnalysis::InsideLoop(){
           } 
         }
       }
-    std::cout << "test FIN " << std::endl;
+    //std::cout << "test FIN " << std::endl;
 
     fTree[wP] -> Fill();  //Skimming for 3 FO; remember to use TNTightLeptons == 3 for plotting!!!
     }
@@ -500,17 +573,66 @@ void WZAnalysis::SetJetVariables(TTree* iniTree){
 
 void WZAnalysis::SetEventVariables(TTree* iniTree){
   iniTree->Branch("TWeight",      &TWeight,      "TWeight/F");
+
+  iniTree->Branch("TWeight_PUSF_Up",      &TWeight_PUSF_Up,      "TWeight_PUSF_Up/F");
+  iniTree->Branch("TWeight_PUSF_Down",      &TWeight_PUSF_Down,      "TWeight_PUSF_Down/F");
+  iniTree->Branch("TWeight_ElecSFUp",      &TWeight_ElecSFUp,      "TWeight_ElecSFUp/F");
+  iniTree->Branch("TWeight_ElecSFDown",      &TWeight_ElecSFDown,      "TWeight_ElecSFDown/F");
+  iniTree->Branch("TWeight_MuonSFUp",      &TWeight_MuonSFUp,      "TWeight_MuonSFUp/F");
+  iniTree->Branch("TWeight_MuonSFDown",      &TWeight_MuonSFDown,      "TWeight_MuonSFDown/F");
+
   iniTree->Branch("TIsSR"  ,      &TIsSR  ,      "TIsSR/B"  );
   iniTree->Branch("TIsSRVBS"  ,      &TIsSRVBS  ,      "TIsSRVBS/B"  );
-  iniTree->Branch("passEtaFilters"  ,      &passEtaFilters  ,      "passEtaFilters/B"  );
-  iniTree->Branch("passMandEtaRequieriments"  ,      &passMandEtaRequieriments  ,      "passMandEtaRequieriments/B"  );
 
-  
+  float goodDiJetMList[goodDiJetM.size()];
+  float goodDiJetDeltaEtaList[goodDiJetDeltaEta.size()];
+
+  for (int unsigned m = 0; m < goodDiJetM.size(); m++){
+    goodDiJetMList[m] = goodDiJetM[m];
+  }        
+  //else std::fill_n(goodDiJetMList, 40, -999); 
+
+  for (int unsigned m = 0; m < goodDiJetDeltaEta.size(); m++){
+    goodDiJetDeltaEtaList[m] = goodDiJetDeltaEta[m];
+  }    
+  //else std::fill_n(goodDiJetDeltaEtaList, 40, -999);   
+  lenM = goodDiJetM.size();  lenEta = goodDiJetDeltaEta.size();
+  iniTree->Branch("lenM"  ,      lenM  ,      "lenM/I"  );
+  iniTree->Branch("lenEta"  ,      lenEta  ,      "lenEta/I"  );
+  iniTree->Branch("goodDiJetMList", goodDiJetMList, "goodDiJetMList[lenM]/F");
+  iniTree->Branch("goodDiJetDeltaEtaList", goodDiJetDeltaEtaList, "goodDiJetDeltaEtaList[lenEta]/F"  );
+
+  iniTree->Branch("finalVar"  ,      &finalVar  ,      "finalVar/F"  );
+  iniTree->Branch("passMandEtaRequieriments", &passMandEtaRequieriments, "passMandEtaRequieriments/B");
+  iniTree->Branch("badBJets"  ,      &badBJets  ,      "badBJets"  );
+  iniTree->Branch("numGoodJets"  ,      &numGoodJets  ,      "numGoodJets/I"  );
+  iniTree->Branch("passEtaFilters"  ,      &passEtaFilters  ,      "passEtaFilters/O"  );
+  iniTree->Branch("MllnomMZ"  ,      &MllnomMZ  ,      "MllnomMZ/F"  );
+  // TMET (ya esta)
+  // TMinMll ta esta, y tm3l TLep_PtZ1, z2 t W.
+
+
+
 
   //the new two branches:
   iniTree->Branch("TIsCRtop"  ,      &TIsCRtop  ,      "TIsCRtop/B"  );
   iniTree->Branch("TIsCRZZ"  ,      &TIsCRZZ  ,      "TIsCRZZ/B"  );
   iniTree->Branch("TIsCRConv"  ,      &TIsCRConv  ,      "TIsCRConv/B"  );
+
+  iniTree->Branch("TIsCRVBS_0"  ,      &TIsCRVBS_0  ,      "TIsCRVBS_0/B"  );
+  iniTree->Branch("TIsCRVBS_1"  ,      &TIsCRVBS_1  ,      "TIsCRVBS_1/B"  );
+  iniTree->Branch("TIsCRVBS_2"  ,      &TIsCRVBS_2  ,      "TIsCRVBS_2/B"  );
+  iniTree->Branch("TIsCRVBS_3"  ,      &TIsCRVBS_3  ,      "TIsCRVBS_3/B"  );
+  iniTree->Branch("TIsCRVBS_4"  ,      &TIsCRVBS_4  ,      "TIsCRVBS_4/B"  );
+  iniTree->Branch("TIsCRVBS_5"  ,      &TIsCRVBS_5  ,      "TIsCRVBS_5/B"  );
+  iniTree->Branch("TIsCRVBS_6"  ,      &TIsCRVBS_6  ,      "TIsCRVBS_6/B"  );
+  iniTree->Branch("TIsCRVBS_7"  ,      &TIsCRVBS_7  ,      "TIsCRVBS_7/B"  );
+  iniTree->Branch("TIsCRVBS_8"  ,      &TIsCRVBS_8  ,      "TIsCRVBS_8/B"  );
+  iniTree->Branch("TIsCRVBS_9"  ,      &TIsCRVBS_9  ,      "TIsCRVBS_9/B"  );
+  iniTree->Branch("TIsCRVBS_10"  ,      &TIsCRVBS_10  ,      "TIsCRVBS_10/B"  );
+  iniTree->Branch("TIsCRVBS_11"  ,      &TIsCRVBS_11  ,      "TIsCRVBS_11/B"  );
+  iniTree->Branch("TIsCRVBS_12"  ,      &TIsCRVBS_12  ,      "TIsCRVBS_12/B"  );
+  iniTree->Branch("TIsCRVBS_13"  ,      &TIsCRVBS_13  ,      "TIsCRVBS_13/B"  );
   
   iniTree->Branch("TIsCRTT",      &TIsCRTT,      "TIsCRTT/B");
   iniTree->Branch("TIsCRDY",      &TIsCRDY,      "TIsCRDY/B");

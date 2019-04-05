@@ -41,6 +41,8 @@ public:
   bool doExternalSyst  = false;
   bool NoShowVarName   = false;
 
+  int scale = 999;
+
   std::vector<Histo*> VBkgs;
   std::vector<Histo*> VSignals;
   std::vector<Histo*> VSignalsErr;
