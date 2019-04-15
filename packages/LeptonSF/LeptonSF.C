@@ -178,7 +178,7 @@ void LeptonSF::loadHisto(Int_t iHisto, Int_t wp){
   else if(iHisto == iMuonEWKinomvaVT){
     filename = "muonSF_mvaVT_EWKino_fullsim_M17_36p5fb"; histoname = "SF";
     fMuonEWKinomvaVT        = GetHistogramFromFileD(path_to_SF_histos + filename + ".root", histoname, "fMuonEWKinomvaVT");
-    fMuonEWKinomvaVT_Unc    = GetHistogramFromFileD(path_to_SF_histos +  "muonUncWZ.root", histoname, "fMuonEWKinomvaVT_Unc");
+    fMuonEWKinomvaVT_Unc    = GetHistogramFromFileD(path_to_SF_histos +  "muonUncWZ.root", "pt_abseta_ratio", "fMuonEWKinomvaVT_Unc");
   }
 
 
@@ -372,7 +372,7 @@ Float_t LeptonSF::GetLeptonSFerror(Float_t pt, Float_t ieta, Int_t type){
       else if(id == iMuonLooseTracksttH)  err += p2(fMuonLooseTracksttH   ->GetBinError(fMuonLooseTracksttH ->FindBin(pt,eta)));
       else if(id == iMuonLooseMiniIsottH) err += p2(fMuonLooseMiniIsottH  ->GetBinError(fMuonLooseMiniIsottH->FindBin(pt,eta)));
       else if(id == iMuonTightIP2DttH)    err += p2(fMuonTightIP2DttH     ->GetBinError(fMuonTightIP2DttH   ->FindBin(pt,eta)));
-      else if(id == iMuonEWKinomvaVT)     err += p2(fMuonEWKinomvaVT_Unc  ->GetBinError(fMuonEWKinomvaVT_Unc->FindBin(pt,eta)));
+      else if(id == iMuonEWKinomvaVT)     err += p2(fMuonEWKinomvaVT_Unc  ->GetBinError(fMuonEWKinomvaVT_Unc->FindBin(abs(eta), pt)));
     }
     else if(type == 1){ 
       if(pt > 200) pt = 199;
