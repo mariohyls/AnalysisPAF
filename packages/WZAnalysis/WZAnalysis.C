@@ -1,5 +1,14 @@
 #include "WZAnalysis.h"
 
+
+
+#define IF_JEC_UP if (VAR == 0)
+#define IF_JEC_DO if (VAR == 1)
+#define IF_BTG_UP if (VAR == 2)
+#define IF_BTG_DO if (VAR == 3)
+#define IF_NORMAL if (VAR == 4)
+
+
 ClassImp(WZAnalysis);
 
 bool GreaterThan(float i, float j){ return (i > j);}
@@ -93,8 +102,15 @@ void WZAnalysis::InsideLoop(){
 
 
 
-
-  for (int wP = 0; wP < nWPoints; wP++){
+  for (int VAR = 0; VAR < 5; VAR ++) // The Great Bucle
+  {
+    // 0 -> JEC up
+    // 1 -> JEC down
+    // 2 -> BTag up
+    // 3 -> BTag down
+    // 4 -> Nothing special
+  for (int wP = 0; wP < nWPoints; wP++)
+  {
     // Leptons and Jets
     //std::cout << "Create vectors\n";
       tightLeptons = {};
@@ -103,12 +119,15 @@ void WZAnalysis::InsideLoop(){
     //std::cout << "Get Tight/FO\n";
       GetLeptonVariables(tightLeptons, fakeableLeptons, looseLeptons);
     //std::cout << "Get Lepton\n";
-      GetJetVariables(selJets, Jets15);
+      /*IF_NORMAL */GetJetVariables(selJets, Jets15, VAR);
+      //IF_JEC_UP GetJetVariables(selJetsJecUp, Jets15);
+      //IF_JEC_DO GetJetVariables(selJetsJecDown, Jets15);     // estas tuplas no sirven
+      //, cua pTJESUp   = p.Pt();, etc y tira con selJets 
     //std::cout << "Get Jet\n";
       GetGenJetVariables(genJets, mcJets);
     //std::cout << "Get GenVariables\n";
 
-      GetMET();
+      GetMET(VAR);
 
     //std::cout << "Match gen/reco\n";
     //fakeableLeptons = getMatchGenSelLeptons(fakeableLeptons, genLeptons, 0.3, true); // Match gen and sel Leptons, require same Id
@@ -127,8 +146,6 @@ void WZAnalysis::InsideLoop(){
 
     if((TNFOLeps >= 3) && TNOSSF > 0  && passTrigger && passMETfilters){ 
     //if(TNFOLeps < 3 && TNOSSF > 0  && passTrigger && passMETfilters){ // trilepton event with OSSF + l, passes trigger and MET filters
-
-    //std::cout << "test 2 " << std::endl;
 
     // Deal with weights:
     //std::cout << "Pass 3FO\n";
@@ -180,7 +197,11 @@ void WZAnalysis::InsideLoop(){
       TWeight_MuonSFDown = NormWeight*ElecSF*MuonSFDo*TrigSF*PUSF;
 
 
-
+      IF_NORMAL TIsSRVBS   = false;
+      IF_JEC_UP TIsSRVBS_JEC_UP   = false;
+      IF_JEC_DO TIsSRVBS_JEC_DO   = false;
+      IF_BTG_UP TIsSRVBS_BTG_UP   = false;
+      IF_BTG_DO TIsSRVBS_BTG_DO   = false;
 
       TIsSR   = false;
       TIsSRVBS = false;
@@ -219,7 +240,11 @@ void WZAnalysis::InsideLoop(){
       // ===================================================================================================================
       TM3l  = -999;
       TMtWZ = -999;
+      IF_JEC_UP TMtWZ_JEC_UP = -999;
+      IF_JEC_DO TMtWZ_JEC_DO = -999;
       TMtW  = -999;
+      IF_JEC_UP TMtW_JEC_UP = -999;
+      IF_JEC_DO TMtW_JEC_DO = -999;
       TMll  = -999;
       TMZ1W = -999;
       TMZ2W = -999;
@@ -231,7 +256,9 @@ void WZAnalysis::InsideLoop(){
       lepZ2 = tempLeps.at(1);
       lepW  = tempLeps.at(2);
 
-
+      TLep_SFerrZ1 = tempLeps.at(0).GetSF( 1);
+      TLep_SFerrZ2 = tempLeps.at(1).GetSF( 1);
+      TLep_SFerrW = tempLeps.at(2).GetSF( 1);
 
       TLep_PtZ1 = lepZ1.Pt();
       TLep_EtaZ1 = lepZ1.Eta();
@@ -270,11 +297,27 @@ void WZAnalysis::InsideLoop(){
         TLep_isConvVeto[i]  = tempLeps.at(i).isConvVeto;
       }
       TLorentzVector metVector = TLorentzVector();
-      metVector.SetPtEtaPhiM(TMET, TMET_Phi, 0., 0.);
-      TM3l = (lepZ1.p + lepZ2.p + lepW.p).M();
-      TMtWZ = (lepZ1.p + lepZ2.p + lepW.p + metVector).Mt();
 
-      TMtW  = (lepW.p + metVector).Mt();
+      IF_NORMAL metVector.SetPtEtaPhiM(TMET, TMET_Phi, 0., 0.);
+      IF_BTG_UP metVector.SetPtEtaPhiM(TMET, TMET_Phi, 0., 0.);
+      IF_BTG_DO metVector.SetPtEtaPhiM(TMET, TMET_Phi, 0., 0.);
+      IF_JEC_UP metVector.SetPtEtaPhiM(TMET_JEC_UP, TMET_Phi_JEC_UP, 0., 0.);
+      IF_JEC_DO metVector.SetPtEtaPhiM(TMET_JEC_DO, TMET_Phi_JEC_DO, 0., 0.);
+
+      TM3l = (lepZ1.p + lepZ2.p + lepW.p).M();
+
+      IF_NORMAL TMtWZ = (lepZ1.p + lepZ2.p + lepW.p + metVector).Mt();
+      IF_BTG_UP TMtWZ = (lepZ1.p + lepZ2.p + lepW.p + metVector).Mt();
+      IF_BTG_DO TMtWZ = (lepZ1.p + lepZ2.p + lepW.p + metVector).Mt();
+      IF_JEC_UP TMtWZ_JEC_UP = (lepZ1.p + lepZ2.p + lepW.p + metVector).Mt();
+      IF_JEC_DO TMtWZ_JEC_DO = (lepZ1.p + lepZ2.p + lepW.p + metVector).Mt();
+
+      IF_NORMAL TMtW  = (lepW.p + metVector).Mt(); 
+      IF_BTG_UP TMtW  = (lepW.p + metVector).Mt(); 
+      IF_BTG_DO TMtW  = (lepW.p + metVector).Mt(); 
+      IF_JEC_UP TMtW_JEC_UP  = (lepW.p + metVector).Mt();
+      IF_JEC_DO TMtW_JEC_DO  = (lepW.p + metVector).Mt();
+
       TMll  = (lepZ1.p + lepZ2.p).M();
       TMZ1W  = (lepZ1.p + lepW.p).M();
       TMZ2W  = (lepZ2.p + lepW.p).M();
@@ -308,7 +351,12 @@ void WZAnalysis::InsideLoop(){
           if (TMinMll > 4) {TIsCRVBS_9 = true;}
           if (TM3l > 90.) {TIsCRVBS_10 = true;} //====
 
-          MllnomMZ = TMath::Abs(TMll - nomZmass);
+          IF_NORMAL MllnomMZ = TMath::Abs(TMll - nomZmass);
+          IF_BTG_UP MllnomMZ = TMath::Abs(TMll - nomZmass);
+          IF_BTG_DO MllnomMZ = TMath::Abs(TMll - nomZmass);
+          IF_JEC_UP MllnomMZ_JEC_UP = TMath::Abs(TMll - nomZmass); 
+          IF_JEC_DO MllnomMZ_JEC_DO = TMath::Abs(TMll - nomZmass);
+
           if (TMath::Abs(TMll - nomZmass) < 15. && TMinMll > 4. && TM3l > 90.) // ====
           {
             TIsCRVBS_7 = true;
@@ -322,7 +370,6 @@ void WZAnalysis::InsideLoop(){
 
               if (TMET > 30) {TIsCRVBS_5 = true;}
               if (passEtaFilters) {TIsCRVBS_6 = true;}
-
 
             if (passEtaFilters && TMET > 30)
             {
@@ -388,7 +435,11 @@ void WZAnalysis::InsideLoop(){
                   //if (TMath::Abs(sum3l.Eta() - 0.5*(jet1.Eta() + jet2.Eta())) < 2.5) // =====
                   if (TMath::Abs(sum3l.Eta() - 0.5*(jet1.Eta() + jet2.Eta())) < 4)
                   {
-                    TIsSRVBS = true;
+                    IF_NORMAL TIsSRVBS = true;
+                    IF_JEC_UP TIsSRVBS_JEC_UP = true;
+                    IF_JEC_DO TIsSRVBS_JEC_DO = true;
+                    IF_BTG_UP TIsSRVBS_BTG_UP = true;
+                    IF_BTG_DO TIsSRVBS_BTG_DO = true;
                   }
                 }
               }
@@ -495,10 +546,14 @@ void WZAnalysis::InsideLoop(){
       }
     //std::cout << "test FIN " << std::endl;
 
-    fTree[wP] -> Fill();  //Skimming for 3 FO; remember to use TNTightLeptons == 3 for plotting!!!
     }
-  }
+    IF_NORMAL fTree[wP] -> Fill();  //Skimming for 3 FO; remember to use TNTightLeptons == 3 for plotting!!!
+  } // End of the wP bucle
+  } // End of the Great Bucle
+
 }
+
+
 
 
 //#####################################################################
@@ -536,8 +591,6 @@ void WZAnalysis::SetLeptonVariables(TTree* iniTree){
   iniTree->Branch("TMZ1W",        &TMZ1W,      "TMZ1W/F");
   iniTree->Branch("TMZ2W",        &TMZ2W,      "TMZ2W/F");
   iniTree->Branch("TM3l",        &TM3l,      "TM3l/F");
-  iniTree->Branch("TMtW",        &TMtW,      "TMtW/F");
-  iniTree->Branch("TMtWZ",        &TMtWZ,      "TMtWZ/F");
   iniTree->Branch("TNOSSF",      &TNOSSF,      "TNOSSF/I");
   iniTree->Branch("TMinMll",      &TMinMll,      "TMinMll/F");
   iniTree->Branch("TConvNumber",      &TConvNumber,      "TConvNumber/I");
@@ -555,11 +608,27 @@ void WZAnalysis::SetLeptonVariables(TTree* iniTree){
   iniTree->Branch("TLep_pdgIdZ2",     &TLep_pdgIdZ2,     "TLep_pdgIdZ2/F");
   iniTree->Branch("TLep_pdgIdW",      &TLep_pdgIdW,     "TLep_pdgIdW/F");
   iniTree->Branch("TLep_isConvVeto",   &TLep_isConvVeto, "TLep_isConvVeto[TNFOLeps]/I");
+
+  // Dependent JEC / Btag branches 
+
+  iniTree->Branch("TLep_SFerrZ1", &TLep_SFerrZ1, "TLep_SFerrZ1/F");
+  iniTree->Branch("TLep_SFerrZ2", &TLep_SFerrZ2, "TLep_SFerrZ2/F");
+  iniTree->Branch("TLep_SFerrW", &TLep_SFerrW, "TLep_SFerrW/F");
+
+  iniTree->Branch("TMtWZ", &TMtWZ, "TMtWZ/F");
+  iniTree->Branch("TMtWZ_JEC_UP", &TMtWZ_JEC_UP, "TMtWZ_JEC_UP/F");
+  iniTree->Branch("TMtWZ_JEC_DO", &TMtWZ_JEC_DO, "TMtWZ_JEC_DO/F");
+
+  iniTree->Branch("TMtW", &TMtW, "TMtW/F");
+  iniTree->Branch("TMtW_JEC_UP", &TMtW_JEC_UP, "TMtW_JEC_UP/F");
+  iniTree->Branch("TMtW_JEC_DO", &TMtW_JEC_DO, "TMtW_JEC_DO/F");
 }
 
 void WZAnalysis::SetJetVariables(TTree* iniTree){
   iniTree->Branch("TNJets",           &TNJets,         "TNJets/I");
   iniTree->Branch("TNBtags",       &TNBtags,     "TNBtags/I");
+  iniTree->Branch("TNBtags_BTG_UP",       &TNBtags_BTG_UP,     "TNBtags_BTG_UP/I");
+  iniTree->Branch("TNBtags_BTG_DO",       &TNBtags_BTG_DO,     "TNBtags_BTG_DO/I");
   iniTree->Branch("TJet_isBJet",       TJet_isBJet,       "TJet_isBJet[TNJets]/I");
   iniTree->Branch("TJet_Pt",           TJet_Pt,           "TJet_Pt[TNJets]/F");
   iniTree->Branch("TJet_Px",           TJet_Px,           "TJet_Px[TNJets]/F");
@@ -572,6 +641,9 @@ void WZAnalysis::SetJetVariables(TTree* iniTree){
 }
 
 void WZAnalysis::SetEventVariables(TTree* iniTree){
+
+
+
   iniTree->Branch("TWeight",      &TWeight,      "TWeight/F");
 
   iniTree->Branch("TWeight_PUSF_Up",      &TWeight_PUSF_Up,      "TWeight_PUSF_Up/F");
@@ -582,8 +654,8 @@ void WZAnalysis::SetEventVariables(TTree* iniTree){
   iniTree->Branch("TWeight_MuonSFDown",      &TWeight_MuonSFDown,      "TWeight_MuonSFDown/F");
 
   iniTree->Branch("TIsSR"  ,      &TIsSR  ,      "TIsSR/B"  );
-  iniTree->Branch("TIsSRVBS"  ,      &TIsSRVBS  ,      "TIsSRVBS/B"  );
 
+  /*
   float goodDiJetMList[goodDiJetM.size()];
   float goodDiJetDeltaEtaList[goodDiJetDeltaEta.size()];
 
@@ -601,13 +673,12 @@ void WZAnalysis::SetEventVariables(TTree* iniTree){
   iniTree->Branch("lenEta"  ,      lenEta  ,      "lenEta/I"  );
   iniTree->Branch("goodDiJetMList", goodDiJetMList, "goodDiJetMList[lenM]/F");
   iniTree->Branch("goodDiJetDeltaEtaList", goodDiJetDeltaEtaList, "goodDiJetDeltaEtaList[lenEta]/F"  );
-
+  */
   iniTree->Branch("finalVar"  ,      &finalVar  ,      "finalVar/F"  );
   iniTree->Branch("passMandEtaRequieriments", &passMandEtaRequieriments, "passMandEtaRequieriments/B");
   iniTree->Branch("badBJets"  ,      &badBJets  ,      "badBJets"  );
   iniTree->Branch("numGoodJets"  ,      &numGoodJets  ,      "numGoodJets/I"  );
   iniTree->Branch("passEtaFilters"  ,      &passEtaFilters  ,      "passEtaFilters/O"  );
-  iniTree->Branch("MllnomMZ"  ,      &MllnomMZ  ,      "MllnomMZ/F"  );
   // TMET (ya esta)
   // TMinMll ta esta, y tm3l TLep_PtZ1, z2 t W.
 
@@ -639,10 +710,30 @@ void WZAnalysis::SetEventVariables(TTree* iniTree){
   iniTree->Branch("TIsNewCRTT",      &TIsNewCRTT,      "TIsNewCRTT/B");
   iniTree->Branch("TIsNewCRDY",      &TIsNewCRDY,      "TIsNewCRDY/B");
   iniTree->Branch("TLHEWeight",        TLHEWeight,         "TLHEWeight[254]/F");
-  iniTree->Branch("TMET",         &TMET,         "TMET/F");
   iniTree->Branch("TEvtNum",         &TEvtNum,         "TEvtNum/l");
-  iniTree->Branch("TGenMET",         &TGenMET,         "TGenMET/F");
-  iniTree->Branch("TMET_Phi",     &TMET_Phi,     "TMET_Phi/F");
+
+  // Dependent JEC / Btag branches 
+  iniTree->Branch("TMET", &TMET, "TMET/F");
+  iniTree->Branch("TMET_JEC_UP", &TMET_JEC_UP, "TMET_JEC_UP/F");
+  iniTree->Branch("TMET_JEC_DO", &TMET_JEC_DO, "TMET_JEC_DO/F");
+  
+  iniTree->Branch("TMET_Phi", &TMET_Phi, "TMET_Phi/F");
+  iniTree->Branch("TMET_Phi_JEC_UP", &TMET_Phi_JEC_UP, "TMET_Phi_JEC_UP/F");
+  iniTree->Branch("TMET_Phi_JEC_DO", &TMET_Phi_JEC_DO, "TMET_Phi_JEC_DO/F");
+  
+  iniTree->Branch("TGenMET", &TGenMET, "TGenMET/F");
+  iniTree->Branch("TGenMET_JEC_UP", &TGenMET_JEC_UP, "TGenMET_JEC_UP/F");
+  iniTree->Branch("TGenMET_JEC_DO", &TGenMET_JEC_DO, "TGenMET_JEC_DO/F"); 
+
+  iniTree->Branch("MllnomMZ", &MllnomMZ, "MllnomMZ/F"  );
+  iniTree->Branch("MllnomMZ_JEC_UP", &MllnomMZ_JEC_UP, "MllnomMZ_JEC_UP/F"  );
+  iniTree->Branch("MllnomMZ_JEC_DO", &MllnomMZ_JEC_DO, "MllnomMZ_JEC_DO/F"  );
+
+  iniTree->Branch("TIsSRVBS", &TIsSRVBS, "TIsSRVBS/B"  );
+  iniTree->Branch("TIsSRVBS_JEC_UP" , &TIsSRVBS_JEC_UP, "TIsSRVBS_JEC_UP/B"  );
+  iniTree->Branch("TIsSRVBS_JEC_DO" , &TIsSRVBS_JEC_DO, "TIsSRVBS_JEC_DO/B"  );
+  iniTree->Branch("TIsSRVBS_BTG_UP" , &TIsSRVBS_BTG_UP, "TIsSRVBS_BTG_UP/B"  );
+  iniTree->Branch("TIsSRVBS_BTG_DO" , &TIsSRVBS_BTG_DO, "TIsSRVBS_BTG_DO/B"  );
 }
 
 Bool_t WZAnalysis::passesMCTruth(std::vector<Lepton> sLep, Int_t addConvs = 1, Int_t requiredLeps = 3){
@@ -727,6 +818,7 @@ void WZAnalysis::GetLeptonsByWP(Int_t wPValue){
         tightLeptons.push_back(selLeptons.at(k));
         if (WPointVal[wPValue] == 5){//VT SF
           tightLeptons.back().SetSF(selLeptons.at(k).GetSF(0)*leptonSFEWKVT->GetLeptonSF(selLeptons.at(k).Pt(), selLeptons.at(k).Eta(), selLeptons.at(k).type));
+          tightLeptons.back().SetSFerr(leptonSFEWKVT->GetLeptonSFerror(selLeptons.at(k).Pt(), selLeptons.at(k).Eta(), selLeptons.at(k).type));
         }
         else { //M SF
           tightLeptons.back().SetSF(selLeptons.at(k).GetSF(0)*leptonSFEWKM->GetLeptonSF(selLeptons.at(k).Pt(), selLeptons.at(k).Eta(), selLeptons.at(k).type));
@@ -770,17 +862,36 @@ void WZAnalysis::GetLeptonVariables(std::vector<Lepton> tightLeptons, std::vecto
   gChannel = gChannel -1; // gchannel used for chan index of histograms
 }
 
-void WZAnalysis::GetJetVariables(std::vector<Jet> selJets, std::vector<Jet> cleanedJets15, Float_t ptCut){
+void WZAnalysis::GetJetVariables(std::vector<Jet> selJets, std::vector<Jet> cleanedJets15, int VAR, Float_t ptCut){
   TNJets = selJets.size(); THT = 0;
   TNBtags = 0;
+
+  IF_BTG_UP TNBtags_BTG_UP = 0;
+  IF_BTG_DO TNBtags_BTG_DO = 0;
   for(Int_t i = 0; i < TNJets; i++){
-    TJet_Pt[i]     = selJets.at(i).Pt();
+    IF_NORMAL TJet_Pt[i]     = selJets.at(i).Pt();
+    IF_BTG_UP TJet_Pt[i]     = selJets.at(i).Pt();
+    IF_BTG_DO TJet_Pt[i]     = selJets.at(i).Pt();
+    IF_JEC_UP TJet_Pt[i]     = selJets.at(i).pTJESUp;
+    IF_JEC_DO TJet_Pt[i]     = selJets.at(i).pTJESDown;
     TJet_Eta[i]    = selJets.at(i).Eta();
     TJet_Phi[i]    = selJets.at(i).Phi();
     TJet_E[i]      = selJets.at(i).E();
     TJet_isBJet[i] = selJets.at(i).isBtag;
+    
+    IF_NORMAL {TJet_isBJet[i] = selJets.at(i).isBtag;}
+    IF_JEC_UP {TJet_isBJet[i] = selJets.at(i).isBtag;}
+    IF_JEC_DO {TJet_isBJet[i] = selJets.at(i).isBtag;}
+    IF_BTG_UP {TJet_isBJet[i] = selJets.at(i).isBtag_BtagUp;}
+    IF_BTG_DO {TJet_isBJet[i] = selJets.at(i).isBtag_BtagDown;}
+    
     THT += TJet_Pt[i];
-    if(selJets.at(i).isBtag)            TNBtags++;
+    
+    IF_NORMAL {if(selJets.at(i).isBtag) TNBtags++;}
+    IF_JEC_UP {if(selJets.at(i).isBtag) TNBtags++;}
+    IF_JEC_DO {if(selJets.at(i).isBtag) TNBtags++;}
+    IF_BTG_UP {if(selJets.at(i).isBtag_BtagUp) {TNBtags++; TNBtags_BTG_UP ++;}}
+    IF_BTG_DO {if(selJets.at(i).isBtag_BtagDown) {TNBtags++; TNBtags_BTG_DO ++;}}
   }
   SetParam("THT",THT);
 }
@@ -794,11 +905,27 @@ void WZAnalysis::GetGenJetVariables(std::vector<Jet> genJets, std::vector<Jet> m
   for(Int_t i = 0; i <  nmcJets; i++) if(mcJets.at(i).p.Pt()  > 50 && TMath::Abs(mcJets.at(i).Eta())    < 4.7 && mcJets.at(i).isBtag)  nFidubJets++;
 }
 
-void WZAnalysis::GetMET(){
-    TMET        = Get<Float_t>("met_pt");
-    TMET_Phi    = Get<Float_t>("met_phi");  // MET phi
-    if(gIsData) return;
-    TGenMET     = Get<Float_t>("met_genPt");
+void WZAnalysis::GetMET(int VAR){
+  IF_NORMAL TMET = Get<Float_t>("met_pt");
+  IF_BTG_UP TMET = Get<Float_t>("met_pt");
+  IF_BTG_DO TMET = Get<Float_t>("met_pt");
+  IF_JEC_UP TMET_JEC_UP = Get<Float_t>("met_jecUp_pt");
+  IF_JEC_DO TMET_JEC_DO = Get<Float_t>("met_jecDown_pt");
+  
+  IF_NORMAL TMET_Phi    = Get<Float_t>("met_phi");  // MET phi
+  IF_BTG_UP TMET_Phi    = Get<Float_t>("met_phi");  // MET phi
+  IF_BTG_DO TMET_Phi    = Get<Float_t>("met_phi");  // MET phi
+  IF_JEC_UP TMET_Phi_JEC_UP    = Get<Float_t>("met_jecUp_phi");  // MET phi
+  IF_JEC_DO TMET_Phi_JEC_DO    = Get<Float_t>("met_jecDown_phi");  // MET phi
+
+  if(gIsData) return;
+  
+  IF_NORMAL TGenMET     = Get<Float_t>("met_genPt");
+  IF_BTG_UP TGenMET     = Get<Float_t>("met_genPt");
+  IF_BTG_DO TGenMET     = Get<Float_t>("met_genPt");
+  IF_JEC_UP TGenMET_JEC_UP     = Get<Float_t>("met_jecUp_genPt");
+  IF_JEC_DO TGenMET_JEC_DO     = Get<Float_t>("met_jecDown_genPt");
+
   if(gIsLHE)  for(Int_t i = 0; i < Get<Int_t>("nLHEweight"); i++)   TLHEWeight[i] = Get<Float_t>("LHEweight_wgt", i);
 }
 
