@@ -22,6 +22,10 @@ TString None         = "TNTightLeps == 3";
 TString AR           = "TIsSR == 1 && TNTightLeps < 3";
 TString SR           = "TIsSR == 1 && TNTightLeps == 3";
 TString SRVBS        = "TIsSRVBS == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
+TString SRVBS_JEC_UP = "TIsSRVBS_JEC_UP == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
+TString SRVBS_JEC_DO = "TIsSRVBS_JEC_DO == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
+TString SRVBS_BTG_UP = "TIsSRVBS_BTG_UP == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
+TString SRVBS_BTG_DO = "TIsSRVBS_BTG_DO == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
 TString SRmmm        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 3";
 TString SRmme        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 2";
 TString SRmee        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 1";
@@ -91,6 +95,10 @@ void DrawPlots(TString cutName, TString treeName = ""){
   TString cut;
   if     (cutName == "SR" ){ cut = SR ; yMax = 600; yMin = 1;}
   else if(cutName == "SRVBS" ){ cut = SRVBS ; yMax = 600; yMin = 1;}
+  else if(cutName == "SRVBS_JEC_UP" ){ cut = SRVBS_JEC_UP ; yMax = 600; yMin = 1;}
+  else if(cutName == "SRVBS_JEC_DO" ){ cut = SRVBS_JEC_DO ; yMax = 600; yMin = 1;}
+  else if(cutName == "SRVBS_BTG_UP" ){ cut = SRVBS_BTG_UP ; yMax = 600; yMin = 1;}
+  else if(cutName == "SRVBS_BTG_DO" ){ cut = SRVBS_BTG_DO ; yMax = 600; yMin = 1;}
 
   else if(cutName == "CRVBS_0" ){ cut = CRVBS_0 ; yMax = 600; yMin = 1;}
   else if(cutName == "CRVBS_1" ){ cut = CRVBS_1 ; yMax = 600; yMin = 1;}
@@ -217,8 +225,9 @@ void DrawPlots(TString cutName, TString treeName = ""){
 
   if (cutName == "SRVBS")
   {
-    DrawPlot("TMET",  cut, "All", 9, 20, 300, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
-    //DrawPlot("TM3l",  cut, "All", 8, 50, 700, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
+    //DrawPlot("1",  cut, "All", 1, 0, 2, "yields", "yields1bin", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
+    //DrawPlot("TMET",  cut, "All", 9, 20, 300, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
+    DrawPlot("TM3l",  cut, "All", 8, 50, 700, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
     //DrawPlot("TMtWZ",  cut, "All", 13, 0, 150, "M_{WZ} [GeV]", cutName, defaultLegPos);
     //DrawPlot("TMtW",  cut, "All", 10 , 40 , 800 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
     //DrawPlot("TMll",  cut, "All", 9, 70 , 110 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin, defaultLegPos);
@@ -374,7 +383,7 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     std::cout << "very Tight!" << std::endl;
     p->SetCut(cut);
 
-    p->scale = scale;
+    //p->scale = scale;
 
     p->SetLegendPosition(legPos);
     //--------------------------------------------------------------------------
@@ -408,7 +417,7 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
       p->SetWeight("TWeight");
       p->AddSample("WZTo3LNu", "WZ",  itBkg, kOrange);
 
-      /*
+      
       // PUSF ==================================================================
       p->SetWeight("TWeight_PUSF_Up");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Up");
@@ -456,7 +465,51 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
       p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"MuonSFDown");
       p->SetWeight("TWeight");
       
+      
+      // JEC ===================================================================
+      p->SetCut(SRVBS_JEC_UP);
+
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"JEC_Up");
+      p->SetWeight("TWeight*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"JEC_Up");
+      p->SetWeight("TWeight*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"JEC_Up");
+
+
+      p->SetCut(SRVBS_JEC_DO);
+
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "JEC_Down");
+      p->SetWeight("TWeight*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"JEC_Down");
+      p->SetWeight("TWeight*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"JEC_Down");
+      
+      
+      p->SetWeight("TWeight");      
+      // BTG ===================================================================
+      p->SetCut(SRVBS_BTG_UP);
+
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"BTG_Up");
+      p->SetWeight("TWeight*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"BTG_Up");
+      p->SetWeight("TWeight*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"BTG_Up");
+
+
+      p->SetCut(SRVBS_BTG_DO);
+
+      p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"BTG_Down");
+      p->SetWeight("TWeight*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"BTG_Down");
+      p->SetWeight("TWeight*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"BTG_Down");
+
+
+      p->SetCut(cut);
+      p->SetWeight("TWeight"); 
     }  
+
+      
     else 
     {
       cout << "WZ will be the signal" << endl;
@@ -477,7 +530,6 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "MuonSFUp");
       p->SetWeight("TWeight_MuonSFDown");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "MuonSFDown");
-      */
       p->SetWeight("TWeight"); 
     }  
 
@@ -488,7 +540,7 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
 
 
     // weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    /*
+    
     // PUSF ====================================================================
     p->SetWeight("TWeight_PUSF_Up"); 
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "PUSF_Up"); // RareSM
@@ -527,9 +579,42 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
     p->AddSample("tZq_ll",    "tZq",  itSys, 1, "MuonSFDown"); // RareSM 
     p->AddSample("tZW_ll",    "tZW",  itSys, 1, "MuonSFDown"); // RareSM 
-    p->SetWeight("TWeight"); 
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    */
+    p->SetWeight("TWeight"); 
+    
+    // JEC_Up ==================================================================
+    p->SetCut(SRVBS_JEC_UP);
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "JEC_Up"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "JEC_Up"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "JEC_Up"); // RareSM 
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    // JEC_Down ================================================================
+    p->SetCut(SRVBS_JEC_DO);
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "JEC_Down"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "JEC_Down"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "JEC_Down"); // RareSM 
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    // BTG_Up ==================================================================
+    p->SetCut(SRVBS_BTG_UP);
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "BTG_Up"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "BTG_Up"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "BTG_Up"); // RareSM 
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    // BTG_Down ================================================================
+    p->SetCut(SRVBS_BTG_DO);
+    p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "BTG_Down"); // RareSM
+    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "BTG_Down"); // RareSM 
+    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "BTG_Down"); // RareSM 
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    p->SetCut(cut);
 
 
     // DATOS
@@ -615,19 +700,23 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
   //p->ScaleSignal(10);
   p->SetSignalStyle("Fill");
   //p->SetRatioOptions("");
-  p->SetRatioMin(0.5);
-  p->SetRatioMax(1.5);
-  //p->AddNormUnc("WZ", 0.06);
-  //p->AddNormUnc("non-Pr", 0.3);
-  //p->AddNormUnc("X+#gamma", 0.2);
-  //p->AddNormUnc("ttX", 0.15);
-  //p->AddNormUnc("tZq", 0.35);
-  //p->AddNormUnc("tZW", 0.35);
-  //p->AddNormUnc("VVV/VV", 0.5);
-  //p->AddNormUnc("ZZ", 0.07);
-  p->AddSystematic("stat"); //PUSF,ElecSF,MuonSF");
+  //p->SetRatioMin(0.5);
+  //p->SetRatioMax(1.5);
+  p->AddNormUnc("WZ", 0.06);
+  p->AddNormUnc("non-Pr", 0.3);
+  p->AddNormUnc("X+#gamma", 0.2);
+  p->AddNormUnc("ttX", 0.15);
+  p->AddNormUnc("tZq", 0.35);
+  p->AddNormUnc("tZW", 0.35);
+  p->AddNormUnc("VVV/VV", 0.5);
+  p->AddNormUnc("ZZ", 0.07);
+  p->AddSystematic("stat");//, PUSF_, ElecSF, MuonSF, JEC_, BTG_");
+  //p->AddSystematic("PUSF_");
+  //p->AddSystematic("JEC_Up, JEC_Down, BTG_Up, BTG_Down");
   cout << "Selection = " << varName << endl;
   cout << "Corresponding to cut: " << cut << endl;
+  p->SetRatioMin(0.5);
+  p->SetRatioMax(2);
   p->PrintYields();
   p->PrintSamples();
   p->doSetLogy = false;
