@@ -688,6 +688,9 @@ Float_t Plot::GetYield(TString pr, TString systag, Int_t ibin){
   else{ 
     Float_t nom = GetYield(pr, "0", ibin);
     Float_t var = 0; Float_t diff = 0; Float_t tempvar = 0;
+    //std::cout << "............................" << std::endl;
+    //std::cout << "nSyst: " << nSysts << std::endl;
+ 
     for(int k = 0; k < nSyst; k++){ // Systematics in k
       ps = VSyst.at(k)->GetTag();
       if(!ps.BeginsWith(pr))   continue;
@@ -698,6 +701,7 @@ Float_t Plot::GetYield(TString pr, TString systag, Int_t ibin){
         diff = TMath::Abs(tempvar - nom);
       }
     }
+    //std::cout << " Returning. pr is " << pr << ". systag:  " << systag << endl;
     if(var != 0) return var;
   }
   //cout << "[Plot::GetYield] WARNING: No systematic " << systag << " for process " << pr << "!!! ...... Returning nominal value... " << endl;
@@ -1097,7 +1101,7 @@ void Plot::DrawStack(TString tag){
   TH1F* hAuxForErr =  (TH1F*) hAllBkg->Clone("hAuxForErr");
   hAuxForErr->Add(hSignal);
   if(doSys && ((Int_t) VSystLabel.size() > 0 || doExternalSyst))  hAuxForErr->Draw("same,e2");
-  std::cout << "I'm here now xd!!!!" << std::endl;
+
 
   //--------- Draw Data
   if(doData && RatioYtitle != "S/B") hData->Draw(dataStyle);
@@ -1583,8 +1587,8 @@ void Plot::PrintSystYields(){
   Int_t nSig  = VSignals.size();
   Int_t nSys  = VSystLabel.size();
   TString pr; TString sys;
-  cout << "\033[1;31m      ";
-  for(Int_t gs = 0; gs < nSys; gs++) cout << "    " << VSystLabel.at(gs);
+  cout << "\033[1;31m \t";
+  for(Int_t gs = 0; gs < nSys; gs++) cout << "\t" << VSystLabel.at(gs);
   cout << "\033[0m\n";
   for(Int_t i = 0; i < nBkgs+nSig; i++){
     if(i < nBkgs) pr = VBkgs.at(i)         ->GetProcess();
@@ -1593,7 +1597,7 @@ void Plot::PrintSystYields(){
     cout << "\033[1;34m";
     for(Int_t j = 0; j < nSys; j++){
       sys = VSystLabel.at(j);
-      cout << Form("   %1.2f ", TMath::Abs(GetYield(pr)-GetYield(pr,sys))/GetYield(pr)*100);
+      cout << Form("\t %1.2f ", TMath::Abs(GetYield(pr)-GetYield(pr,sys))/GetYield(pr)*100);
     }
     cout << "\033[0m\n";
   }
@@ -1697,6 +1701,83 @@ void Plot::PrintYields(TString cuts, TString labels, TString channels, TString o
 }
 
 
+void Plot::PrintTrueSystYields()
+{
+  std::cout << "\n\n\n" << std::endl;
+  Int_t nBkgs = VBkgs.size();
+  Int_t nSig  = VSignals.size();
+  Int_t nSys  = VSystLabel.size();
+
+  //std::cout <<" "<< nBkgs <<" "<< nSys <<" "<< nSig <<" "<< std::endl;
+
+  TString pr; TString sys;
+  std::cout << "\n";
+  std::cout << " [errs_in_%]";
+  for(Int_t gs = 0; gs < nSys; gs++)
+  {
+    if (VSystLabel.at(gs) == "X+#gamma") {cout << "\t" <<  "X+#gam";}
+    else cout << "\t" <<  VSystLabel.at(gs);
+  } 
+  cout << "\t" <<  "stat";
+  cout << "\t" <<  "tot_evts";
+  std::cout << "\n";
+
+  for(Int_t i = 0; i < nBkgs+nSig; i++)
+  {
+    if(i < nBkgs) pr = VBkgs.at(i)         ->GetProcess();
+    else          pr = VSignals.at(i-nBkgs)->GetProcess();
+    cout << Form(" %s ", pr.Data());
+    if (TString(pr.Data()).Length() < 4){ std::cout << "\t";}
+    //for(Int_t j = 0; j < nSys; j++){
+    //  sys = VSystLabel.at(j);
+    //  cout << Form("\t %1.2f ", TMath::Abs(GetYield(pr)-GetYield(pr,sys))/GetYield(pr)*100);
+    //}
+    Float_t nom = GetYield(pr);
+    for(Int_t j = 0; j < nSys - nBkgs; j++) // TODO: make me fancy
+    { 
+      float err = TMath::Abs((GetYield(pr,VSystLabel.at(j))-nom))/nom*100;
+      std::cout << Form("\t %1.2f", err);
+    }
+ 
+
+    // print Norm Uncs
+    for (unsigned int j = 0; j < prs.size(); j++)
+    {
+      if (pr == prs[j])
+      {
+        std::cout << Form("\t %1.1f", prUncs[j]);
+      } 
+      else {std::cout << "\t 0000";}
+    }
+
+    // print stat Unc
+    std::cout << Form("\t %1.2f", TMath::Sqrt(nom)/nom * 100); // stat
+
+    // print tot evts
+    if(i < nBkgs){
+      std::cout << Form("\t %1.2f", VBkgs.at(i)->GetYield());}
+    else{  
+      std::cout << Form("\t %1.2f", VSignals.at(i-nBkgs)->GetYield());}
+
+    std::cout << "\n";
+  }
+}
+
+/*
+Float_t Plot::GetTotalSystematic(TString pr){
+  Float_t sys2 = 0;
+  Int_t nSys  = VSystLabel.size();
+  Float_t nom = GetYield(pr);
+  for(Int_t j = 0; j < nSys; j++){
+    sys2 += fabs((GetYield(pr,VSystLabel.at(j))-nom) * (GetYield(pr,VSystLabel.at(j))-nom));
+  }
+  return TMath::Sqrt(sys2);
+}
+*/
+
+
+
+
 void Plot::PrintBinsYields(TString options){
   Int_t nBkgs = VBkgs.size();
   Int_t nSignals = VSignals.size();
@@ -1771,8 +1852,15 @@ void Plot::PrintBinsYields(TString options){
 }
 
 
+void Plot::StoreNormUncs(TString pr, float norm)
+{
+  prs.push_back(pr);
+  prUncs.push_back(norm);
+}
+
 void Plot::AddNormUnc(TString pr, Float_t systUp, Float_t systDown){
-  if(systDown == -99) systDown = systUp;
+  //if(systDown == -99) systDown = systUp;
+  systDown = systUp;
   Histo* hUp   = GetHisto(pr)->CloneHisto(pr + "_" + pr + "Up");
   Histo* hDown = GetHisto(pr)->CloneHisto(pr + "_" + pr + "Down");
   hUp->SetType(itSys); hDown->SetType(itSys);
@@ -1780,6 +1868,22 @@ void Plot::AddNormUnc(TString pr, Float_t systUp, Float_t systDown){
   hUp->SetSysTag(pr+"Up"); hDown->SetSysTag(pr+"Down");
   hUp->Scale(1+systUp); hDown->Scale(1-systDown);
   hUp->SetDirectory(0); hDown->SetDirectory(0);
+
+  std::cout << pr << " " << hUp->Integral() << " " << hDown->Integral() <<
+           " " << GetHisto(pr)->Integral() << " "<< std::endl;
+  
+
+  // compute %
+
+  float nom = GetHisto(pr)->Integral();
+  float normPerc = TMath::Abs(nom - hUp->Integral()) / nom * 100;
+  std::cout << "Norm perc for " << pr << " is " << normPerc << std::endl;
+
+
+  // store Norm Uncs ( in  % )
+
+  StoreNormUncs(pr, normPerc);
+
   AddToSystematicLabels(pr);
   AddToHistos(hUp); AddToHistos(hDown);
   return;
