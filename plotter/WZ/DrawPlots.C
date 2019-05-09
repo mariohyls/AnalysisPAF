@@ -21,11 +21,11 @@ bool doLog;
 TString None         = "TNTightLeps == 3";
 TString AR           = "TIsSR == 1 && TNTightLeps < 3";
 TString SR           = "TIsSR == 1 && TNTightLeps == 3";
-TString SRVBS        = "TIsSRVBS == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
-TString SRVBS_JEC_UP = "TIsSRVBS_JEC_UP == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
-TString SRVBS_JEC_DO = "TIsSRVBS_JEC_DO == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
-TString SRVBS_BTG_UP = "TIsSRVBS_BTG_UP == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
-TString SRVBS_BTG_DO = "TIsSRVBS_BTG_DO == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 100";
+TString SRVBS        = "TIsSRVBS == 1        && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
+TString SRVBS_JEC_UP = "TIsSRVBS_JEC_UP == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
+TString SRVBS_JEC_DO = "TIsSRVBS_JEC_DO == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
+TString SRVBS_BTG_UP = "TIsSRVBS_BTG_UP == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
+TString SRVBS_BTG_DO = "TIsSRVBS_BTG_DO == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
 TString SRmmm        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 3";
 TString SRmme        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 2";
 TString SRmee        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 1";
@@ -225,9 +225,9 @@ void DrawPlots(TString cutName, TString treeName = ""){
 
   if (cutName == "SRVBS")
   {
-    //DrawPlot("1",  cut, "All", 1, 0, 2, "yields", "yields1bin", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
-    //DrawPlot("TMET",  cut, "All", 9, 20, 300, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
-    DrawPlot("TM3l",  cut, "All", 8, 50, 700, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
+    DrawPlot("1",  cut, "All", 1, 0, 2, "yields", "yields1bin", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
+    DrawPlot("TMET",  cut, "All", 9, 20, 300, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
+    //DrawPlot("TM3l",  cut, "All", 8, 50, 700, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos, 3);
     //DrawPlot("TMtWZ",  cut, "All", 13, 0, 150, "M_{WZ} [GeV]", cutName, defaultLegPos);
     //DrawPlot("TMtW",  cut, "All", 10 , 40 , 800 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin, defaultLegPos);
     //DrawPlot("TMll",  cut, "All", 9, 70 , 110 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin, defaultLegPos);
@@ -255,29 +255,29 @@ void DrawPlots(TString cutName, TString treeName = ""){
     if (cutName == "CRVBS_7") {mult = 60;}
     if (cutName == "CRVBS_4") {mult = 60;}
     
-    DrawPlot("finalVar",  cut, "All", 20, -2, 6, "tests", "finalVar", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("goodDiJetMList",  cut, "All", 20, 0, 10, "tests", "DiJets con buena M inv", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("goodDiJetDeltaEtaList",  cut, "All", 20, -10, 10, "tests", "DiJets bien separados", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("badBJets",  cut, "All", 20, -1, 10, "tests", "badBJets", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("numGoodJets",  cut, "All", 10, 0, 10, "tests", "numGoodJets", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("passMandEtaRequieriments",  cut, "All", 13, -1, 2, "tests", "pasa req en M y eta", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("passEtaFilters",  cut, "All", 20, -1, 2, "tests", "passEtaFilters", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("MllnomMZ",  cut, "All", 20, -10, 30, "tests", "Mll - nomMZ", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("TJet_Pt",  cut, "All", 40, 30, 300, "tests", "TJet_Pt", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("TJet_Eta",  cut, "All", 20, -5, 5, "tests", "TJet_Eta", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("finalVar",  cut, "All", 20, -2, 6, "tests", "finalVar", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("goodDiJetMList",  cut, "All", 20, 0, 10, "tests", "DiJets con buena M inv", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("goodDiJetDeltaEtaList",  cut, "All", 20, -10, 10, "tests", "DiJets bien separados", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("badBJets",  cut, "All", 20, -1, 10, "tests", "badBJets", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("numGoodJets",  cut, "All", 10, 0, 10, "tests", "numGoodJets", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("passMandEtaRequieriments",  cut, "All", 13, -1, 2, "tests", "pasa req en M y eta", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("passEtaFilters",  cut, "All", 20, -1, 2, "tests", "passEtaFilters", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("MllnomMZ",  cut, "All", 20, -10, 30, "tests", "Mll - nomMZ", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("TJet_Pt",  cut, "All", 40, 30, 300, "tests", "TJet_Pt", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("TJet_Eta",  cut, "All", 20, -5, 5, "tests", "TJet_Eta", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
 
-    DrawPlot("TMET",  cut, "All", 9, 20, 300, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("TM3l",  cut, "All", 15, 50, 700, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("TMinMll",  cut, "All", 150, 0, 150, "TMinMll [GeV]", "TMinMll", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("TMtWZ",  cut, "All", 13, 0, 150, "M_{WZ} [GeV]", "TMtWZ", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("TMtW",  cut, "All", 10 , 40 , 800 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("TMll",  cut, "All", 9, 70 , 110 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("TLep_PtZ1",  cut, "All", 10,0 , 500 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1", cutName, outputDirName, yMax, yMin, defaultLegPos, mult); 
-    DrawPlot("TLep_PtZ2",  cut, "All", 9,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("TMET",  cut, "All", 9, 20, 300, "E_{T}^{miss} [GeV]", "TMET", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("TM3l",  cut, "All", 15, 50, 700, "M_{3l} [GeV]", "TM3l", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("TMinMll",  cut, "All", 150, 0, 150, "TMinMll [GeV]", "TMinMll", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("TMtWZ",  cut, "All", 13, 0, 150, "M_{WZ} [GeV]", "TMtWZ", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("TMtW",  cut, "All", 10 , 40 , 800 , "M_{T}^{W} [GeV]", "TMtW", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("TMll",  cut, "All", 9, 70 , 110 , "M^{Z} [GeV]", "TMll", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
+    //DrawPlot("TLep_PtZ1",  cut, "All", 10,0 , 500 , "p_{T}^{lepZ1} [GeV]", "TLep_PtZ1", cutName, outputDirName, yMax, yMin, defaultLegPos, mult); 
+    //DrawPlot("TLep_PtZ2",  cut, "All", 9,0 , 200 , "p_{T}^{lepZ2} [GeV]", "TLep_PtZ2",  cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
     DrawPlot("TLep_PtW",  cut, "All", 9,0 , 300 , "p_{T}^{lepW} [GeV]", "TLep_PtW", cutName, outputDirName, yMax, yMin, defaultLegPos, mult);
-    DrawPlot("TLep_EtaZ1",  cut, "All", 7,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin, "UURR", mult);
-    DrawPlot("TLep_EtaZ2",  cut, "All", 8,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin, "UURR", mult);
-    DrawPlot("TLep_EtaW",  cut, "All", 8 ,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin, "UURR", mult); 
+    //DrawPlot("TLep_EtaZ1",  cut, "All", 7,-2.5 , 2.5 , "#eta^{lepZ1} [GeV]", "TLep_EtaZ1", cutName, outputDirName, yMax, yMin, "UURR", mult);
+    //DrawPlot("TLep_EtaZ2",  cut, "All", 8,-2.5 , 2.5 , "#eta^{lepZ2} [GeV]", "TLep_EtaZ2", cutName, outputDirName, yMax, yMin, "UURR", mult);
+    //DrawPlot("TLep_EtaW",  cut, "All", 8 ,-2.5 , 2.5 , "#eta^{lepW} [GeV]", "TLep_EtaW", cutName, outputDirName, yMax, yMin, "UURR", mult); 
   }  
 
   if (cutName == "CRZZ")
@@ -383,17 +383,20 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     std::cout << "very Tight!" << std::endl;
     p->SetCut(cut);
 
+    bool computeSyst = true;
     //p->scale = scale;
 
     p->SetLegendPosition(legPos);
     //--------------------------------------------------------------------------
     // MONTE CARLOS
 
-    p->SetCut(cut+ " && TConvNumber > 0");
 
-    p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itBkg, kMagenta-9);  // X+gamma 
     //p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1, TTWToLNu_ext2_part1, \
     //TTWToLNu_ext2_part2",    "ttX",  itBkg, kRed-10); // RareSM
+    //p->AddSample("WZTo3LNu, WZ", "WZ!",  itSignal, kYellow+8);    // WZ, queda más alta
+
+    p->SetCut(cut+ " && TConvNumber > 0");
+    p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itBkg, kMagenta-9);  // X+gamma 
     p->SetCut(cut);
 
     p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", \
@@ -401,9 +404,80 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     
     p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itBkg, kGreen-9); // RareSM
     
+    if (computeSyst)
+    {
+      // PUSF ==================================================================
+      p->SetWeight("TWeight_PUSF_Up");
 
-    p->SetCut(cut);
-    //p->AddSample("WZTo3LNu, WZ", "WZ!",  itSignal, kYellow+8);    // WZ, queda más alta
+      p->SetCut(cut+ " && TConvNumber > 0");
+      p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itSys, 1, "PUSF_Up");
+      p->SetCut(cut);
+      p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", "ttX",  itSys, 1, "PUSF_Up");
+      p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itSys, 1, "PUSF_Up");
+
+      p->SetWeight("TWeight_PUSF_Down");
+
+      p->SetCut(cut+ " && TConvNumber > 0");
+      p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itSys, 1, "PUSF_Down");
+      p->SetCut(cut);
+      p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", "ttX",  itSys, 1, "PUSF_Down");
+      p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itSys, 1, "PUSF_Down");
+
+
+      // ElecSF ================================================================
+      p->SetWeight("TWeight_ElecSFUp");
+
+      p->SetCut(cut+ " && TConvNumber > 0");
+      p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itSys, 1, "ElecSFUp");
+      p->SetCut(cut);
+      p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", "ttX",  itSys, 1, "ElecSFUp");
+      p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itSys, 1, "ElecSFUp");
+
+      p->SetWeight("TWeight_ElecSFDown");
+
+      p->SetCut(cut+ " && TConvNumber > 0");
+      p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itSys, 1, "ElecSFDown");
+      p->SetCut(cut);
+      p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", "ttX",  itSys, 1, "ElecSFDown");
+      p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itSys, 1, "ElecSFDown");
+
+      // MuonSF ================================================================
+      p->SetWeight("TWeight_MuonSFUp");
+
+      p->SetCut(cut+ " && TConvNumber > 0");
+      p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itSys, 1, "MuonSFUp");
+      p->SetCut(cut);
+      p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", "ttX",  itSys, 1, "MuonSFUp");
+      p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itSys, 1, "MuonSFUp");
+
+      p->SetWeight("TWeight_MuonSFDown");
+
+      p->SetCut(cut+ " && TConvNumber > 0");
+      p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itSys, 1, "MuonSFDown");
+      p->SetCut(cut);
+      p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", "ttX",  itSys, 1, "MuonSFDown");
+      p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itSys, 1, "MuonSFDown");
+      
+      
+      p->SetWeight("TWeight");  
+
+      // JEC ===================================================================
+      p->SetCut(SRVBS_JEC_UP+ " && TConvNumber > 0");
+      p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itSys, 1, "JEC_Up");
+      p->SetCut(SRVBS_JEC_UP);
+      p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", "ttX",  itSys, 1, "JEC_Up");
+      p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itSys, 1, "JEC_Up");
+
+      p->SetCut(SRVBS_JEC_DO+ " && TConvNumber > 0");
+      p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "X+#gamma", itSys, 1, "JEC_Down");
+      p->SetCut(SRVBS_JEC_DO);
+      p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1", "ttX",  itSys, 1, "JEC_Down");
+      p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "VVV/VV",  itSys, 1, "JEC_Down");
+
+      p->SetCut(cut);
+      p->SetWeight("TWeight");   
+    }
+
 
 
     cout << cutName << endl;
@@ -411,58 +485,59 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     {
       //p->AddSample("WZ_EWK_M60", "VBS",  itSignal, kRed-7);
       p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSignal, kRed-7);
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSignal, kRed-7);
       p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSignal, kRed-7);
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSignal, kRed-7);
       p->SetWeight("TWeight");
       p->AddSample("WZTo3LNu", "WZ",  itBkg, kOrange);
 
-      
+      if (computeSyst)
+      {
       // PUSF ==================================================================
       p->SetWeight("TWeight_PUSF_Up");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Up");
       p->SetWeight("TWeight_PUSF_Up*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1, "PUSF_Up");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1, "PUSF_Up");
       p->SetWeight("TWeight_PUSF_Up*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1, "PUSF_Up");
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1, "PUSF_Up");
       
       p->SetWeight("TWeight_PUSF_Down");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Down");
       p->SetWeight("TWeight_PUSF_Down*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1, "PUSF_Down");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1, "PUSF_Down");
       p->SetWeight("TWeight_PUSF_Down*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1, "PUSF_Down");
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1, "PUSF_Down");
 
       // ElecSF ================================================================
       p->SetWeight("TWeight_ElecSFUp");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "ElecSFUp");
       p->SetWeight("TWeight_ElecSFUp*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1, "ElecSFUp");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1, "ElecSFUp");
       p->SetWeight("TWeight_ElecSFUp*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1, "ElecSFUp");
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1, "ElecSFUp");
       
       p->SetWeight("TWeight_ElecSFDown");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "ElecSFDown");
       p->SetWeight("TWeight_ElecSFDown*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1, "ElecSFDown");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1, "ElecSFDown");
       p->SetWeight("TWeight_ElecSFDown*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1, "ElecSFDown");
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1, "ElecSFDown");
       p->SetWeight("TWeight");
 
       // MuonSF ================================================================
       p->SetWeight("TWeight_MuonSFUp");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"MuonSFUp");
       p->SetWeight("TWeight_MuonSFUp*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"MuonSFUp");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"MuonSFUp");
       p->SetWeight("TWeight_MuonSFUp*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"MuonSFUp");
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"MuonSFUp");
       
       p->SetWeight("TWeight_MuonSFDown");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "MuonSFDown");
       p->SetWeight("TWeight_MuonSFDown*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"MuonSFDown");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"MuonSFDown");
       p->SetWeight("TWeight_MuonSFDown*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"MuonSFDown");
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"MuonSFDown");
       p->SetWeight("TWeight");
       
       
@@ -471,39 +546,41 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
 
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"JEC_Up");
       p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"JEC_Up");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"JEC_Up");
       p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"JEC_Up");
-
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"JEC_Up");
 
       p->SetCut(SRVBS_JEC_DO);
 
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "JEC_Down");
       p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"JEC_Down");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"JEC_Down");
       p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"JEC_Down");
-      
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"JEC_Down");      
       
       p->SetWeight("TWeight");      
+
+
       // BTG ===================================================================
+      /*
       p->SetCut(SRVBS_BTG_UP);
 
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"BTG_Up");
       p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"BTG_Up");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"BTG_Up");
       p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"BTG_Up");
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"BTG_Up");
 
 
       p->SetCut(SRVBS_BTG_DO);
 
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"BTG_Down");
       p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "SR VBS",  itSys, 1,"BTG_Down");
+      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"BTG_Down");
       p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "SR VBS",  itSys, 1,"BTG_Down");
-
+      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"BTG_Down");
+      */
+      }
 
       p->SetCut(cut);
       p->SetWeight("TWeight"); 
@@ -516,6 +593,9 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
       p->AddSample("WZTo3LNu", "WZ",  itSignal, kOrange);
 
       // weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (computeSyst)
+      //if (false)
+      {
       p->SetWeight("TWeight_PUSF_Up"); 
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Up");
       p->SetWeight("TWeight_PUSF_Down");
@@ -530,90 +610,75 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "MuonSFUp");
       p->SetWeight("TWeight_MuonSFDown");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "MuonSFDown");
+      }
       p->SetWeight("TWeight"); 
     }  
 
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itBkg, kGreen-5); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itBkg, kAzure+10); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
+    //p->AddSample("tZq_ll",    "tZq",  itBkg, kAzure+10); // RareSM 
+    //p->AddSample("tZW_ll",    "tZW",  itBkg, kAzure+10); // RareSM 
+
 
 
     // weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    
+    if (computeSyst)
+    //if (false)
+    {
     // PUSF ====================================================================
     p->SetWeight("TWeight_PUSF_Up"); 
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "PUSF_Up"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "PUSF_Up"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "PUSF_Up"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "PUSF_Up"); // RareSM 
 
     p->SetWeight("TWeight_PUSF_Down");
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "PUSF_Down"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "PUSF_Down"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "PUSF_Down"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "PUSF_Down"); // RareSM 
 
     // ElecSF ==================================================================
     p->SetWeight("TWeight_ElecSFUp"); 
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "ElecSFUp"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "ElecSFUp"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "ElecSFUp"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "ElecSFUp"); // RareSM 
 
     p->SetWeight("TWeight_ElecSFDown");
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "ElecSFDown"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "ElecSFDown"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "ElecSFDown"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "ElecSFDown"); // RareSM 
 
     // MuonSF ==================================================================
     p->SetWeight("TWeight_MuonSFUp"); 
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "MuonSFUp"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "MuonSFUp"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "MuonSFUp"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "MuonSFUp"); // RareSM 
 
     p->SetWeight("TWeight_MuonSFDown");
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "MuonSFDown"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "MuonSFDown"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "MuonSFDown"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "MuonSFDown"); // RareSM 
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     p->SetWeight("TWeight"); 
     
     // JEC_Up ==================================================================
     p->SetCut(SRVBS_JEC_UP);
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "JEC_Up"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "JEC_Up"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "JEC_Up"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "JEC_Up"); // RareSM 
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     // JEC_Down ================================================================
     p->SetCut(SRVBS_JEC_DO);
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "JEC_Down"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "JEC_Down"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "JEC_Down"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "JEC_Down"); // RareSM 
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+    /*
     // BTG_Up ==================================================================
     p->SetCut(SRVBS_BTG_UP);
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "BTG_Up"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "BTG_Up"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "BTG_Up"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "BTG_Up"); // RareSM 
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     // BTG_Down ================================================================
     p->SetCut(SRVBS_BTG_DO);
     p->AddSample("ZZTo4L, GGHZZ4L",    "ZZ",  itSys, 1, "BTG_Down"); // RareSM
-    //p->AddSample("tZq_ll, tZW_ll",    "tZX",  itBkg, kAzure+10); // RareSM 
-    p->AddSample("tZq_ll",    "tZq",  itSys, 1, "BTG_Down"); // RareSM 
-    p->AddSample("tZW_ll",    "tZW",  itSys, 1, "BTG_Down"); // RareSM 
+    p->AddSample("tZq_ll, tZW_ll",    "tZX",  itSys, 1, "BTG_Down"); // RareSM 
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+    */
+    }
     p->SetCut(cut);
 
 
@@ -706,26 +771,30 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
   p->AddNormUnc("non-Pr", 0.3);
   p->AddNormUnc("X+#gamma", 0.2);
   p->AddNormUnc("ttX", 0.15);
-  p->AddNormUnc("tZq", 0.35);
-  p->AddNormUnc("tZW", 0.35);
+  p->AddNormUnc("tZX", 0.35);
   p->AddNormUnc("VVV/VV", 0.5);
   p->AddNormUnc("ZZ", 0.07);
-  p->AddSystematic("stat");//, PUSF_, ElecSF, MuonSF, JEC_, BTG_");
+  //p->AddSystematic("stat");//, PUSF_, ElecSF, MuonSF, JEC_, BTG_");
+  
+  std::cout << "Total WZ Syst: " << p->GetTotalSystematic("WZ") << std::endl;
+  std::cout << "Total ZZ Syst: " << p->GetTotalSystematic("ZZ") << std::endl;
+
+
   //p->AddSystematic("PUSF_");
   //p->AddSystematic("JEC_Up, JEC_Down, BTG_Up, BTG_Down");
   cout << "Selection = " << varName << endl;
   cout << "Corresponding to cut: " << cut << endl;
   p->SetRatioMin(0.5);
-  p->SetRatioMax(2);
+  p->SetRatioMax(1.5);
   p->PrintYields();
-  p->PrintSamples();
+  //p->PrintSamples();
   p->doSetLogy = false;
   p->DrawStack("0");
   //p->doSetLogy = true;
   //p->DrawStack("log");
   p->PrintSystYields();
+  p->PrintTrueSystYields();
   delete p;
-  
 }
 
 
