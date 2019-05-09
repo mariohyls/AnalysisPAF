@@ -371,7 +371,7 @@ void WZAnalysis::InsideLoop(){
               if (TMET > 30) {TIsCRVBS_5 = true;}
               if (passEtaFilters) {TIsCRVBS_6 = true;}
 
-            if (passEtaFilters && TMET > 30)
+            if (passEtaFilters && TMET > 10)  // TMET > 30
             {
               TIsCRVBS_4 = true;
               badBJets = false; // B jets with pt > 30 & eta < 4.7 
@@ -398,7 +398,8 @@ void WZAnalysis::InsideLoop(){
               if (!badBJets) {TIsCRVBS_3 = true;}
               if (numGoodJets >= 2) {TIsCRVBS_2 = true;}
 
-              if (!badBJets && numGoodJets >= 2)
+              //if (!badBJets && numGoodJets >= 2)
+              if (numGoodJets >= 2)
               {
                 TIsCRVBS_1 = true;
 
@@ -435,6 +436,7 @@ void WZAnalysis::InsideLoop(){
                   //if (TMath::Abs(sum3l.Eta() - 0.5*(jet1.Eta() + jet2.Eta())) < 2.5) // =====
                   if (TMath::Abs(sum3l.Eta() - 0.5*(jet1.Eta() + jet2.Eta())) < 4)
                   {
+                    //std::cout << "peanut" << std::endl;
                     IF_NORMAL TIsSRVBS = true;
                     IF_JEC_UP TIsSRVBS_JEC_UP = true;
                     IF_JEC_DO TIsSRVBS_JEC_DO = true;
@@ -805,9 +807,11 @@ void WZAnalysis::GetLeptonsByWP(Int_t wPValue){
         fakeableLeptons.push_back(foLeptons.at(k));
         if (WPointVal[wPValue] == 5){//VT SF
           fakeableLeptons.back().SetSF(foLeptons.at(k).GetSF(0)*leptonSFEWKVT->GetLeptonSF(foLeptons.at(k).Pt(), foLeptons.at(k).Eta(), foLeptons.at(k).type));
+          fakeableLeptons.back().SetSFerr(leptonSFEWKVT->GetLeptonSFerror(foLeptons.at(k).Pt(), foLeptons.at(k).Eta(), foLeptons.at(k).type));
         }
         else { //M SF
           fakeableLeptons.back().SetSF(foLeptons.at(k).GetSF(0)*leptonSFEWKM->GetLeptonSF(foLeptons.at(k).Pt(), foLeptons.at(k).Eta(), foLeptons.at(k).type));
+          fakeableLeptons.back().SetSFerr(leptonSFEWKM->GetLeptonSFerror(foLeptons.at(k).Pt(), foLeptons.at(k).Eta(), foLeptons.at(k).type));
         }
         nFO++;
       }
