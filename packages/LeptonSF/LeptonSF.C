@@ -372,7 +372,7 @@ Float_t LeptonSF::GetLeptonSFerror(Float_t pt, Float_t ieta, Int_t type){
       else if(id == iMuonLooseTracksttH)  err += p2(fMuonLooseTracksttH   ->GetBinError(fMuonLooseTracksttH ->FindBin(pt,eta)));
       else if(id == iMuonLooseMiniIsottH) err += p2(fMuonLooseMiniIsottH  ->GetBinError(fMuonLooseMiniIsottH->FindBin(pt,eta)));
       else if(id == iMuonTightIP2DttH)    err += p2(fMuonTightIP2DttH     ->GetBinError(fMuonTightIP2DttH   ->FindBin(pt,eta)));
-      else if(id == iMuonEWKinomvaVT)     err += p2(fMuonEWKinomvaVT_Unc  ->GetBinError(fMuonEWKinomvaVT_Unc->FindBin(abs(eta), pt)));
+      else if(id == iMuonEWKinomvaVT)     err += p2(fMuonEWKinomvaVT_Unc  ->GetBinContent(fMuonEWKinomvaVT_Unc->FindBin(pt, abs(eta))));
     }
     else if(type == 1){ 
       if(pt > 200) pt = 199;
