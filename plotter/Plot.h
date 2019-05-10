@@ -43,6 +43,15 @@ public:
 
   int scale = 999;
 
+
+  // Temporal solution for storing Norm Uncertainties
+
+  std::vector <TString> prs = {};
+  std::vector <float> prUncs = {};
+
+
+
+
   std::vector<Histo*> VBkgs;
   std::vector<Histo*> VSignals;
   std::vector<Histo*> VSignalsErr;
@@ -341,7 +350,8 @@ public:
   virtual void PrintYields(TString cuts = "", TString labels = "", TString channels = "", TString options = "");
   virtual void PrintBinsYields(TString options = "txt,tex,html");
 	virtual void PrintSystYields();
-	virtual Float_t GetYield(TString pr = "ttbar", TString systag = "0", Int_t ibin = -1);
+	virtual void PrintTrueSystYields();
+  virtual Float_t GetYield(TString pr = "ttbar", TString systag = "0", Int_t ibin = -1);
 	virtual Float_t GetBinYield(TString pr = "ttbar", Int_t bin = 1, TString systag = "0");
   virtual Histo* GetHisto(TString pr = "ttbar", TString systag = "0");
   virtual Int_t GetProcessType(TString pr, TString systag = "");
@@ -352,6 +362,7 @@ public:
   virtual void GroupProcesses(TString pr, TString newProcess);
   void AddUncToHisto(TString pr, TString sys, TString pr_new, TString sys_new);
   Histo* GetHistoError(TString pr, TString sys);
+  virtual void StoreNormUncs(TString pr,float norm);
   virtual void AddNormUnc(TString pr, Float_t systUp = 1, Float_t systDown = - 99);
 	virtual void SetLineStyle(TString pr = "ttbar", Int_t s = 0){  Histo* h = GetHisto(pr, "0"); h->SetLineStyle(s);}
 	virtual void SetLineColor(TString pr = "ttbar", Int_t s = 0){  Histo* h = GetHisto(pr, "0"); h->SetLineColor(s); h->SetFillColor(s);}

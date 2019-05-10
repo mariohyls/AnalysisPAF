@@ -13,13 +13,13 @@ enum eSysts   {inorm, nSysts};
 enum eWPoints  {nolepMVA, veryLoose, loose, medium, tight, veryTight, extraTight, top};
 
 //const int nWPoints = 8;
-const int nWPoints = 4;
+const int nWPoints = 3;
 const int nWeights = 248;
 const TString gChanLabel[nChannels] = {"ElElEl", "ElElMu","ElMuMu","MuMuMu"};
 const TString sCut[nLevels] = {"trilepton","onZ","met","0btag","m3l"};
 //const TString sWPoints[nWPoints] = {"nolepMVA","veryLoose", "loose", "medium", "tight", "veryTight", "extraTight", "top"};
-const TString sWPoints[nWPoints]  = {"nolepMVA", "medium", "veryTight", "top"};
-const Int_t   WPointVal[nWPoints] = {0, 3, 5, 7}; //Just don't want to tinker with maps
+const TString sWPoints[nWPoints]  = {"nolepMVA", "medium", "veryTight"};//, "top"};
+const Int_t   WPointVal[nWPoints] = {0, 3, 5}; //Just don't want to tinker with maps
 const TString gSys[nSysts] = {"0"};
 
 
@@ -69,10 +69,10 @@ class WZAnalysis : public PAFChainItemSelector{
     Bool_t makeTree   = false;
 
     void GetLeptonVariables(std::vector<Lepton> selLeptons, std::vector<Lepton> foLeptons, std::vector<Lepton> looseLeptons);
-    void GetJetVariables(std::vector<Jet> selJets, std::vector<Jet> cleanedJets15, Float_t ptCut = 30);
+    void GetJetVariables(std::vector<Jet> selJets, std::vector<Jet> cleanedJets15, int VAR, Float_t ptCut = 30);
     void GetGenJetVariables(std::vector<Jet> genJets, std::vector<Jet> mcJets);
     void GetLeptonsByWP(Int_t wPValue); 
-    void GetMET();
+    void GetMET(int VAR);
     Bool_t passesMCTruth(std::vector<Lepton> sLep, Int_t addConvs, Int_t requiredLeps);
     
     Int_t nFiduJets; Int_t nFidubJets; 
@@ -126,20 +126,33 @@ class WZAnalysis : public PAFChainItemSelector{
     Float_t TMZ1W;
     Float_t TMZ2W;
     Float_t TMtW;       // M_T of the W boson
+    Float_t TMtW_JEC_UP;       // M_T of the W boson
+    Float_t TMtW_JEC_DO;       // M_T of the W boson
     Float_t TMtWZ;       // M_T of the WZ system
+    Float_t TMtWZ_JEC_UP;       // M_T of the WZ system
+    Float_t TMtWZ_JEC_DO;       // M_T of the WZ system
     Float_t TM3l;      // Invariant mass of the three leptons
     Float_t TMinMll;   // Invariant mass of any pair
     Int_t   TNOSSF;      // Number of OSSF pairs
     Float_t TMET;      // Reco MET
+    Float_t TMET_JEC_UP;      // Reco MET
+    Float_t TMET_JEC_DO;      // Reco MET
     Float_t TGenMET;   // Gent MET
+    Float_t TGenMET_JEC_UP;   // Gent MET
+    Float_t TGenMET_JEC_DO;   // Gent MET
     Float_t TMET_Phi;  // MET phi
+    Float_t TMET_Phi_JEC_UP;  // MET phi
+    Float_t TMET_Phi_JEC_DO;  // MET phi
 
     ULong64_t  TEvtNum;
 
     // Event classification
-    Bool_t  TIsSR;
-    Bool_t  TIsSRVBS;
-
+    Bool_t  TIsSR = 0;
+    Bool_t  TIsSRVBS = 0;
+    Bool_t  TIsSRVBS_JEC_UP = 0;
+    Bool_t  TIsSRVBS_JEC_DO = 0;
+    Bool_t  TIsSRVBS_BTG_UP = 0;
+    Bool_t  TIsSRVBS_BTG_DO = 0;
 
     // Aux variables defined to study the cuts
 
@@ -149,6 +162,8 @@ class WZAnalysis : public PAFChainItemSelector{
     
     Float_t finalVar = -999;
     Float_t MllnomMZ = -999;
+    Float_t MllnomMZ_JEC_UP = -999;
+    Float_t MllnomMZ_JEC_DO = -999;
     Bool_t badBJets = false;
     Int_t numGoodJets = 0;
 
@@ -223,9 +238,17 @@ class WZAnalysis : public PAFChainItemSelector{
     Int_t   TConvNumber;
     Int_t   TFakeNumber;
 
+    Float_t TLep_SFerrZ1;
+    Float_t TLep_SFerrZ2;
+    Float_t TLep_SFerrW;
+
+
+
     // Jet Things
     Int_t TNJets;            
     Int_t TNBtags;
+    Int_t TNBtags_BTG_UP;
+    Int_t TNBtags_BTG_DO;
     Float_t TJet_Pt[20];
     Float_t TJet_Px[20];
     Float_t TJet_Py[20];
