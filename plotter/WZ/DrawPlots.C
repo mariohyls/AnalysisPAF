@@ -24,6 +24,10 @@ TString SR           = "TIsSR == 1 && TNTightLeps == 3";
 TString SRVBS        = "TIsSRVBS == 1        && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
 TString SRVBS_JEC_UP = "TIsSRVBS_JEC_UP == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
 TString SRVBS_JEC_DO = "TIsSRVBS_JEC_DO == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
+//Strictly speaking you should vary everything UP/Down (commented until you rerun trees)
+//TString SRVBS_JEC_UP = "TIsSRVBS_JEC_UP == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt_JEC_UP > 80 && TMET_JEC_UP > 30";
+//TString SRVBS_JEC_DO = "TIsSRVBS_JEC_DO == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt_JEC_DO > 80 && TMET_JEC_DO > 30";
+
 TString SRVBS_BTG_UP = "TIsSRVBS_BTG_UP == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
 TString SRVBS_BTG_DO = "TIsSRVBS_BTG_DO == 1 && TNTightLeps >= 3 && TMinMll > 20 && TJet_Pt > 80 && TMET > 30";
 TString SRmmm        = "TIsSR == 1 && TNTightLeps == 3 && TChannel == 3";
@@ -82,7 +86,7 @@ Float_t yMin;
 void DrawPlots(TString cutName, TString treeName = ""){
   
   TString username(gSystem->GetUserInfo(gSystem->GetUid())->fUser);
-  //if(username=="carlosec") pathToTree ="/mnt_pool/ciencias_users/user/carlosec/AnalysisPAF/WZ_temp/";
+  if(username=="carlosec") pathToTree ="/mnt_pool/ciencias_users/user/gonzalezm/work/AnalysisPAF/WZ_temp/";
   if(username=="gonzalezm") pathToTree ="/mnt_pool/ciencias_users/user/gonzalezm/work/AnalysisPAF/WZ_temp/";
 
 //  if(username=="carlosec") pathToTree ="/pool/ciencias/userstorage/carlosec/WZTrees_20_09_2017/"; //Testing the plotter
@@ -174,8 +178,11 @@ void DrawPlots(TString cutName, TString treeName = ""){
 
 
   std::cout << "hello!" << std::endl;
+  TString outputDirName;
+  if(username=="carlosec")    outputDirName = "/mnt_pool/ciencias_users/user/carlosec/www/test/";
+  if(username=="gonzalezm")   outputDirName = "/mnt_pool/ciencias_users/user/gonzalezm/www/" + treeName + "_v2/" + cutName + "/";
 
-  TString outputDirName = "/mnt_pool/ciencias_users/user/gonzalezm/www/" + treeName + "_v2/" + cutName + "/";
+
   //DrawPlot("TMET",  cut, "All", 11, 30, 140, "E_{T}^{miss} [GeV]", "TMET_log", cutName, outputDirName, yMax, yMin);
 
 
@@ -484,12 +491,13 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     if (cutName == "SRVBS" || (std::string(cutName).rfind("CRVBS", 0) == 0)) 
     {
       //p->AddSample("WZ_EWK_M60", "VBS",  itSignal, kRed-7);
-      p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSignal, kRed-7);
-      p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSignal, kRed-7);
       p->SetWeight("TWeight");
       p->AddSample("WZTo3LNu", "WZ",  itBkg, kOrange);
+      p->SetWeight("TWeight*0.338664");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSignal, kRed-7);
+      p->SetWeight("TWeight*0.661336");
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSignal, kRed-7);
+      p->SetWeight("TWeight");
 
       if (computeSyst)
       {
@@ -497,47 +505,48 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
       p->SetWeight("TWeight_PUSF_Up");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Up");
       p->SetWeight("TWeight_PUSF_Up*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1, "PUSF_Up");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1, "PUSF_Up");
       p->SetWeight("TWeight_PUSF_Up*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1, "PUSF_Up");
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1, "PUSF_Up");
       
       p->SetWeight("TWeight_PUSF_Down");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "PUSF_Down");
       p->SetWeight("TWeight_PUSF_Down*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1, "PUSF_Down");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1, "PUSF_Down");
       p->SetWeight("TWeight_PUSF_Down*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1, "PUSF_Down");
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1, "PUSF_Down");
+      p->SetWeight("TWeight");
 
       // ElecSF ================================================================
       p->SetWeight("TWeight_ElecSFUp");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "ElecSFUp");
       p->SetWeight("TWeight_ElecSFUp*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1, "ElecSFUp");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1, "ElecSFUp");
       p->SetWeight("TWeight_ElecSFUp*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1, "ElecSFUp");
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1, "ElecSFUp");
       
       p->SetWeight("TWeight_ElecSFDown");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "ElecSFDown");
       p->SetWeight("TWeight_ElecSFDown*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1, "ElecSFDown");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1, "ElecSFDown");
       p->SetWeight("TWeight_ElecSFDown*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1, "ElecSFDown");
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1, "ElecSFDown");
       p->SetWeight("TWeight");
 
       // MuonSF ================================================================
       p->SetWeight("TWeight_MuonSFUp");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"MuonSFUp");
       p->SetWeight("TWeight_MuonSFUp*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"MuonSFUp");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1,"MuonSFUp");
       p->SetWeight("TWeight_MuonSFUp*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"MuonSFUp");
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1,"MuonSFUp");
       
       p->SetWeight("TWeight_MuonSFDown");
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "MuonSFDown");
       p->SetWeight("TWeight_MuonSFDown*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"MuonSFDown");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1,"MuonSFDown");
       p->SetWeight("TWeight_MuonSFDown*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"MuonSFDown");
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1,"MuonSFDown");
       p->SetWeight("TWeight");
       
       
@@ -546,17 +555,19 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
 
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"JEC_Up");
       p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"JEC_Up");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1,"JEC_Up");
       p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"JEC_Up");
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1,"JEC_Up");
+      p->SetWeight("TWeight");
+
 
       p->SetCut(SRVBS_JEC_DO);
 
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1, "JEC_Down");
       p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"JEC_Down");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1,"JEC_Down");
       p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"JEC_Down");      
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1,"JEC_Down");      
       
       p->SetWeight("TWeight");      
 
@@ -567,18 +578,18 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
 
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"BTG_Up");
       p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"BTG_Up");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1,"BTG_Up");
       p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"BTG_Up");
-
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1,"BTG_Up");
+      p->SetWeight("TWeight");
 
       p->SetCut(SRVBS_BTG_DO);
 
       p->AddSample("WZTo3LNu", "WZ",  itSys, 1,"BTG_Down");
       p->SetWeight("TWeight*0.338664");
-      p->AddSample("WZ_EWK_M60_part2", "WZ-VBS",  itSys, 1,"BTG_Down");
+      p->AddSample("WZ_EWK_M60_part2", "VBS-WZ",  itSys, 1,"BTG_Down");
       p->SetWeight("TWeight*0.661336");
-      p->AddSample("WZ_EWK_M60_part1", "WZ-VBS",  itSys, 1,"BTG_Down");
+      p->AddSample("WZ_EWK_M60_part1", "VBS-WZ",  itSys, 1,"BTG_Down");
       */
       }
 
@@ -690,42 +701,27 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
     p->SetCut(cut); //Data fakes, relax tight to FO
     p->SetWeight("GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), 1)/35980"); //Fake rates for the fakerate god  
     //DATA FAKES
-    p->AddSample("dataRun2016BCDEFGH",                     "non-Pr",  itBkg, kGray,"0", "fakes"); 
+    p->AddSample("dataRun2016BCDEFGH", "non-Pr",  itBkg, kGray,"0", "fakes"); 
     //PROMPT SUB
     p->SetWeight("TWeight*GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), -1)"); //Fake rates for the promptsub god  
     p->SetCut(cut);
     //--------------------------------------------------------------------------
-
-
-    /*
-
-
+    //Somehow missing the electroweak subtraction (which is bad)
+    p->AddSample("ZZTo4L, GGHZZ4L",    "non-Pr",  itBkg, kGray); // RareSM
+    p->AddSample("tZq_ll, tZW_ll",    "non-Pr",  itBkg, kGray); // RareSM 
+    p->SetWeight("TWeight*GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), -1)");
+    p->AddSample("WZTo3LNu", "non-Pr",  itBkg, kGray);
+    p->SetWeight("TWeight*0.338664*GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), -1)");
+    p->AddSample("WZ_EWK_M60_part2", "non-Pr",  itBkg, kGray);
+    p->SetWeight("TWeight*0.661336*GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), -1)");
+    p->AddSample("WZ_EWK_M60_part1", "non-Pr",  itBkg, kGray);
+    p->SetWeight("TWeight*GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), -1)");
+    p->SetCut(cut+ " && TConvNumber > 0");
+    p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG", "non-Pr", itBkg, kGray);  // X+gamma 
     p->SetCut(cut);
-    p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG",                "X+#gamma", itBkg, kViolet+2);  // X+gamma 
-    p->SetCut(cut);
-  	p->AddSample("MuonEG, DoubleEG, DoubleMuon, SingleElec, SingleMuon",                     "Data",  itData);             // Data
-    p->AddSample("WZTo3LNu",                                                                   "WZ",       itSignal, kYellow);    // WZ  
-    p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb_amcatnlo,WWTo2L2Nu, WpWpJJ, WWTo2L2Nu_DoubleScat",    "VVV/VV",  itBkg, kGreen-9); // RareSM
-    p->AddSample("ZZTo4L",    "ZZ",  itBkg, kCyan-5); // RareSM
-    p->AddSample("tZq_ll_0, tZq_ll_1, tZq_ll_2, tZq_ll_3",    "tZq",  itBkg, kGreen); // RareSM
-    p->AddSample("TTZToLL_M1to10,TTZToLLNuNu,TTWToLNu,TTTT,TTHNonbb",    "ttX",  itBkg, kRed-10); // RareSM
-    p->SetCut(cut + " && TConvNumber == 0");
-    cut.ReplaceAll("TNTightLeps", "TNFOLeps");
-    p->SetCut(cut); //Data fakes, relax tight to FO
-    p->SetWeight("GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), 1)/35980"); //Fake rates for the fakerate god  
-    //DATA FAKES
-    p->AddSample("DoubleEG, DoubleMuon, SingleElec, SingleMuon",                     "non-Pr",  itBkg, kBlue,"0", "fakes"); 
-    //PROMPT SUB
-    p->SetWeight("TWeight*GetFRweightlepMVA3lep(GetFRweightMVAVT(TLep_PtZ1, TLep_EtaZ1, TLep_IsTightZ1, TLep_pdgIdZ1), GetFRweightMVAVT(TLep_PtZ2, TLep_EtaZ2, TLep_IsTightZ2, TLep_pdgIdZ2), GetFRweightMVAVT(TLep_PtW, TLep_EtaW, TLep_IsTightW, TLep_pdgIdW), -1)"); //Fake rates for the promptsub god  
-    p->SetCut(cut);
-    p->AddSample("TGJets, TTGJets, WGToLNuG, ZGTo2LG, WZG",                "X+#gamma", itBkg, kViolet+2);  // X+gamma 
-    p->SetCut(cut);
-    p->AddSample("WZTo3LNu",                                                                   "WZ",       itSignal, kYellow);    // WZ
-    p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb_amcatnlo, WWTo2L2Nu, WpWpJJ, WWTo2L2Nu_DoubleScat",    "VVV/VV",  itBkg, kGreen-9); // RareSM
-    p->AddSample("ZZTo4L",    "ZZ",  itBkg, kCyan-5); // RareSM
-    p->AddSample("tZq_ll_0, tZq_ll_1, tZq_ll_2, tZq_ll_3",    "tZq",  itBkg, kGreen); // RareSM
-    p->AddSample("TTZToLL_M1to10,TTZToLLNuNu,TTWToLNu,TTTT,TTHNonbb",    "ttX",  itBkg, kRed-10); // RareSM
-    */
+    p->AddSample("TTHnobb_pow, TTLLJets_m1to10,TTZToLLNuNu,TTWToLNu_ext1",    "non-Pr",  itBkg, kGray); // RareSM
+    p->AddSample("WWW, WWZ, WZZ, ZZZ, VHToNonbb",    "non-Pr",  itBkg, kGray); // RareSM
+    
   }
   else {//Load DATA FAKES, APPLY FAKE RATE FILES!!!
   /*
@@ -770,14 +766,14 @@ void DrawPlot(TString var, TString cut, TString chan, Int_t nbins, Float_t bin0,
   p->AddNormUnc("WZ", 0.06);
   p->AddNormUnc("non-Pr", 0.3);
   p->AddNormUnc("X+#gamma", 0.2);
-  p->AddNormUnc("ttX", 0.15);
-  p->AddNormUnc("tZX", 0.35);
+  p->AddNormUnc("ttX", 0.10);
+  p->AddNormUnc("tZX", 0.15);
   p->AddNormUnc("VVV/VV", 0.5);
   p->AddNormUnc("ZZ", 0.07);
   //p->AddSystematic("stat");//, PUSF_, ElecSF, MuonSF, JEC_, BTG_");
   
-  std::cout << "Total WZ Syst: " << p->GetTotalSystematic("WZ") << std::endl;
-  std::cout << "Total ZZ Syst: " << p->GetTotalSystematic("ZZ") << std::endl;
+  //std::cout << "Total WZ Syst: " << p->GetTotalSystematic("WZ") << std::endl;
+  //std::cout << "Total ZZ Syst: " << p->GetTotalSystematic("ZZ") << std::endl;
 
 
   //p->AddSystematic("PUSF_");
