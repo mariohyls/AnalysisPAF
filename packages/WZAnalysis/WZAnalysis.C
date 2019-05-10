@@ -633,6 +633,8 @@ void WZAnalysis::SetJetVariables(TTree* iniTree){
   iniTree->Branch("TNBtags_BTG_DO",       &TNBtags_BTG_DO,     "TNBtags_BTG_DO/I");
   iniTree->Branch("TJet_isBJet",       TJet_isBJet,       "TJet_isBJet[TNJets]/I");
   iniTree->Branch("TJet_Pt",           TJet_Pt,           "TJet_Pt[TNJets]/F");
+  iniTree->Branch("TJet_Pt_JEC_UP",           TJet_Pt_JEC_UP,           "TJet_Pt[TNJets]/F");
+  iniTree->Branch("TJet_Pt_JEC_DO",           TJet_Pt_JEC_DO,           "TJet_Pt[TNJets]/F");
   iniTree->Branch("TJet_Px",           TJet_Px,           "TJet_Px[TNJets]/F");
   iniTree->Branch("TJet_Py",           TJet_Py,           "TJet_Py[TNJets]/F");
   iniTree->Branch("TJet_Pz",           TJet_Pz,           "TJet_Pz[TNJets]/F");
@@ -877,7 +879,10 @@ void WZAnalysis::GetJetVariables(std::vector<Jet> selJets, std::vector<Jet> clea
     IF_BTG_UP TJet_Pt[i]     = selJets.at(i).Pt();
     IF_BTG_DO TJet_Pt[i]     = selJets.at(i).Pt();
     IF_JEC_UP TJet_Pt[i]     = selJets.at(i).pTJESUp;
+    IF_JEC_UP TJet_Pt_JEC_UP[i] = selJets.at(i).pTJESUp;
     IF_JEC_DO TJet_Pt[i]     = selJets.at(i).pTJESDown;
+    IF_JEC_DO TJet_Pt_JEC_DO[i] = selJets.at(i).pTJESDown;
+
     TJet_Eta[i]    = selJets.at(i).Eta();
     TJet_Phi[i]    = selJets.at(i).Phi();
     TJet_E[i]      = selJets.at(i).E();

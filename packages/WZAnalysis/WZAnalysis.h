@@ -250,6 +250,9 @@ class WZAnalysis : public PAFChainItemSelector{
     Int_t TNBtags_BTG_UP;
     Int_t TNBtags_BTG_DO;
     Float_t TJet_Pt[20];
+    Float_t TJet_Pt_JEC_UP[20];
+    Float_t TJet_Pt_JEC_DO[20];
+
     Float_t TJet_Px[20];
     Float_t TJet_Py[20];
     Float_t TJet_Pz[20];
